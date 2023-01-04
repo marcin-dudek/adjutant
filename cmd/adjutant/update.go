@@ -2,10 +2,13 @@ package main
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
-	Lines = 2
+	Scan  = 2
+	Exit  = 3
+	Lines = 3
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -24,23 +27,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "tab", "shift+tab", "enter", "up", "down":
 			s := msg.String()
 
-			// Did the user press enter while the submit button was focused?
-			// If so, exit.
-			if s == "enter" && m.focusIndex == Lines {
+			if s == "enter" && m.focusIndex == Exit {
 				return m, tea.Quit
 			}
 
-			// Cycle indexes
-			if s == "up" || s == "shift+tab" {
-				m.focusIndex--
-			} else {
-				m.focusIndex++
+			if s == "enter" && m.focusIndex == Scan {
+				return m, info
 			}
 
-			if m.focusIndex > Lines {
-				m.focusIndex = 0
-			} else if m.focusIndex < 0 {
-				m.focusIndex = Lines
+			if s == "up" || s == "shift+tab" {
+				m.focusIndex = moveDown(m.scanned, m.focusIndex)
+			} else {
+				m.focusIndex = moveUp(m.scanned, m.focusIndex)
 			}
 
 			var cmd tea.Cmd
@@ -50,6 +48,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmd = m.title.Focus()
 			}
 
+			log.Info(log.Fields{"msg": s, "index": m.focusIndex, "step": "after"})
 			return m, cmd
 		}
 	case cd:
@@ -72,4 +71,34 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, cmd
+}
+
+func moveUp(scanned bool, index int) int {
+	if scanned {
+		if index == Lines {
+			return 0
+		}
+		return index + 1
+	}
+
+	if index == Scan {
+		return Exit
+	} else {
+		return Scan
+	}
+}
+
+func moveDown(scanned bool, index int) int {
+	if scanned {
+		if index == 0 {
+			return Lines
+		}
+		return index - 1
+	}
+
+	if index == Scan {
+		return Exit
+	} else {
+		return Scan
+	}
 }

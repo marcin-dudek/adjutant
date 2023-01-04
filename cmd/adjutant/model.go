@@ -12,7 +12,6 @@ type model struct {
 	title      textinput.Model
 	tracks     int
 	sizeInMB   float64
-	cursorMode textinput.CursorMode
 	scanned    bool
 	copying    bool
 	progress   int
@@ -38,6 +37,6 @@ func initialModel() model {
 		title:      title,
 		scanned:    false,
 		copying:    false,
-		cursorMode: textinput.CursorBlink,
+		focusIndex: 2,
 	}
 }
