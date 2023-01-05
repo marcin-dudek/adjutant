@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -13,41 +13,32 @@ import (
 )
 
 var (
-	path string = "/home/manek/music/"
+	source  string        = "/home/manek/music/"
+	options id3v2.Options = id3v2.Options{Parse: true}
 )
 
 func info() tea.Msg {
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(source)
 	if err != nil {
 		return err
 	}
 
-	options := id3v2.Options{Parse: true}
-
 	var tracks []track
 	var size int64
-	var total time.Duration
+	var total, length time.Duration
 	var artist, title string
 	for _, file := range files {
-		if !file.IsDir() && strings.HasSuffix(file.Name(), "mp3") {
-			size += file.Size()
-			mp3, err := id3v2.Open(filepath.Join(path, file.Name()), options)
-			if err != nil {
-				return err
-			}
-			defer mp3.Close()
-			l, _ := strconv.ParseInt(mp3.GetTextFrame(mp3.CommonID("Length")).Text, 10, 32)
-
-			log.Info(log.Fields{
-				"length": l,
-				"artist": mp3.Artist(),
-				"title":  mp3.Title(),
-			})
-			artist = mp3.Artist()
-			title = mp3.Title()
-
-			total += time.Duration(l) * time.Millisecond
-			tracks = append(tracks, track{name: file.Name(), size: file.Size()})
+		info, e := file.Info()
+		log.Info(log.Fields{
+			"name": info.Name(),
+			"size": info.Size(),
+			"dir":  info.IsDir(),
+		})
+		if !file.IsDir() && strings.HasSuffix(file.Name(), "mp3") && e == nil {
+			size += info.Size()
+			artist, title, length = mp3details(file.Name())
+			total += length
+			tracks = append(tracks, track{name: file.Name(), size: info.Size()})
 		}
 	}
 
@@ -58,6 +49,20 @@ func info() tea.Msg {
 		tracks: tracks,
 		length: total,
 	}
+}
+
+func mp3details(file string) (string, string, time.Duration) {
+	mp3, _ := id3v2.Open(filepath.Join(source, file), options)
+	defer mp3.Close()
+	l, _ := strconv.ParseInt(mp3.GetTextFrame(mp3.CommonID("Length")).Text, 10, 32)
+
+	log.Info(log.Fields{
+		"length": l,
+		"artist": mp3.Artist(),
+		"title":  mp3.Title(),
+	})
+
+	return mp3.Artist(), mp3.Title(), time.Duration(l) * time.Millisecond
 }
 
 type cd struct {

@@ -59,13 +59,6 @@ func (m model) View() string {
 	}
 	fmt.Fprintf(&b, "\n%s %s\n", scanButton.Render("[ SCAN ]"), exitButton.Render("[ EXIT ]"))
 
-	// if m.scanned {
-	// 	fmt.Fprintln(&b, helpStyle.Render("alt+s - scan"))
-	// 	fmt.Fprintln(&b, helpStyle.Render("alt+e - copy"))
-	// } else {
-	// 	fmt.Fprintln(&b, helpStyle.Render("alt+s - scan"))
-	// }
-
 	return b.String()
 }
 
