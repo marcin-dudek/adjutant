@@ -15,6 +15,10 @@ func (m model) Init() tea.Cmd {
 	return textinput.Blink
 }
 
+var (
+	program *tea.Program
+)
+
 func main() {
 	f, err := getLogFile()
 	if err != nil {
@@ -25,8 +29,8 @@ func main() {
 
 	log.SetOutput(f)
 	log.SetFormatter(&log.JSONFormatter{})
-
-	if _, err := tea.NewProgram(initialModel()).Run(); err != nil {
+	program = tea.NewProgram(initialModel())
+	if _, err := program.Run(); err != nil {
 		fmt.Printf("could not start program: %s\n", err)
 		os.Exit(1)
 	}

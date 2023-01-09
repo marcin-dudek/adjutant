@@ -54,15 +54,15 @@ func info() tea.Msg {
 func mp3details(file string) (string, string, time.Duration) {
 	mp3, _ := id3v2.Open(filepath.Join(source, file), options)
 	defer mp3.Close()
-	l, _ := strconv.ParseInt(mp3.GetTextFrame(mp3.CommonID("Length")).Text, 10, 32)
+	length, _ := strconv.ParseInt(mp3.GetTextFrame(mp3.CommonID("Length")).Text, 10, 32)
 
 	log.Info(log.Fields{
-		"length": l,
+		"length": length,
 		"artist": mp3.Artist(),
 		"title":  mp3.Title(),
 	})
 
-	return mp3.Artist(), mp3.Title(), time.Duration(l) * time.Millisecond
+	return mp3.Artist(), mp3.Title(), time.Duration(length) * time.Millisecond
 }
 
 type cd struct {

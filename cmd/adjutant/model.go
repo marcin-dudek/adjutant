@@ -1,8 +1,6 @@
 package main
 
 import (
-	"time"
-
 	"github.com/charmbracelet/bubbles/textinput"
 )
 
@@ -10,12 +8,9 @@ type model struct {
 	focusIndex int
 	author     textinput.Model
 	title      textinput.Model
-	tracks     int
-	sizeInMB   float64
-	scanned    bool
 	copying    bool
 	progress   int
-	length     time.Duration
+	cd         *cd
 }
 
 func initialModel() model {
@@ -35,8 +30,8 @@ func initialModel() model {
 	return model{
 		author:     author,
 		title:      title,
-		scanned:    false,
 		copying:    false,
 		focusIndex: 2,
+		cd:         nil,
 	}
 }

@@ -26,7 +26,7 @@ func (m model) View() string {
 	var b strings.Builder
 	fmt.Fprintln(&b, titleStyle.Render("Adjutant"))
 
-	if m.scanned && !m.copying {
+	if !m.copying && m.cd != nil {
 		if m.focusIndex == 0 {
 			setFocused(&m.author)
 			setUnfocused(&m.title)
@@ -40,9 +40,9 @@ func (m model) View() string {
 
 		fmt.Fprintln(&b, m.author.View())
 		fmt.Fprintln(&b, m.title.View())
-		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Files  → %d", m.tracks)))
-		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Size   → %.2f MB", m.sizeInMB)))
-		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Length → %s", m.length)))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Files  → %d", len(m.cd.tracks))))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Size   → %.2f MB", float64(m.cd.size)/(1000*1000))))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Length → %s", m.cd.length)))
 	}
 
 	if m.copying {

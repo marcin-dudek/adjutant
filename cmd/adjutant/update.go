@@ -21,7 +21,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, info
 		case "alt+e":
 			m.copying = true
-			return m, nil
+			return m, copyWithArg(*m.cd)
 
 		// Set focus to next input
 		case "tab", "shift+tab", "enter", "up", "down":
@@ -36,9 +36,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			if s == "up" || s == "shift+tab" {
-				m.focusIndex = moveDown(m.scanned, m.focusIndex)
+				m.focusIndex = moveDown(m.cd != nil, m.focusIndex)
 			} else {
-				m.focusIndex = moveUp(m.scanned, m.focusIndex)
+				m.focusIndex = moveUp(m.cd != nil, m.focusIndex)
 			}
 
 			var cmd tea.Cmd
@@ -52,13 +52,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 		}
 	case cd:
-		m.scanned = true
+		m.cd = &msg
 		m.author.SetValue(msg.author)
 		m.title.SetValue(msg.title)
-		m.tracks = len(msg.tracks)
-		m.scanned = true
-		m.sizeInMB = float64(msg.size) / (1024 * 1024)
-		m.length = msg.length
 		return m, nil
 	}
 
