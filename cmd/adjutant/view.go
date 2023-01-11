@@ -46,7 +46,7 @@ func (m model) View() string {
 	if m.progress != nil {
 		fmt.Fprintln(&b, m.progressBar.View())
 		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Progress → %d/%d", m.progress.done, m.progress.total)))
-		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Progress → %.2f/%.2f", toMB(m.progress.doneBytes), toMB(m.progress.totalBytes))))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Progress → %.2f/%.2f MB", toMB(m.progress.doneBytes), toMB(m.progress.totalBytes))))
 		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Current  → %s", m.progress.current)))
 	}
 
@@ -55,7 +55,7 @@ func (m model) View() string {
 		fmt.Fprintln(&b, successStyle.Render(fmt.Sprintf("Author → %s", m.completed.author)))
 		fmt.Fprintln(&b, successStyle.Render(fmt.Sprintf("Title  → %s", m.completed.title)))
 		fmt.Fprintln(&b, successStyle.Render(fmt.Sprintf("Copied → %d", m.completed.total)))
-		fmt.Fprintln(&b, successStyle.Render(fmt.Sprintf("Size   → %.2f", toMB(m.completed.totalBytes))))
+		fmt.Fprintln(&b, successStyle.Render(fmt.Sprintf("Size   → %.2f MB", toMB(m.completed.totalBytes))))
 	}
 
 	if m.progress == nil {
@@ -71,7 +71,7 @@ func (m model) View() string {
 		if m.focusIndex == ExitIndex {
 			exitButton = &focused
 		}
-		fmt.Fprintf(&b, "\n%s %s %s\n", scanButton.Render("[ SCAN ]"), copyButton.Render("[ COPY ]"), exitButton.Render("[ EXIT ]"))
+		fmt.Fprintf(&b, "%s %s %s\n", scanButton.Render("[ SCAN ]"), copyButton.Render("[ COPY ]"), exitButton.Render("[ EXIT ]"))
 	}
 
 	return b.String()
