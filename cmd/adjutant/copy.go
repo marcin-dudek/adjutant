@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -29,7 +31,7 @@ type completed struct {
 	totalBytes int64
 }
 
-func copyWithArg(cd cd) tea.Cmd {
+func copyWithArg(cd cd, author, title string) tea.Cmd {
 	var totalBytes, bytesDone int64
 	for _, t := range cd.tracks {
 		totalBytes += t.size
@@ -37,10 +39,16 @@ func copyWithArg(cd cd) tea.Cmd {
 
 	return func() tea.Msg {
 		log.Info(log.Fields{
-			"cd-author":  cd.author,
+			"author":     author,
+			"title":      title,
 			"tracks":     len(cd.tracks),
 			"total-size": totalBytes,
 		})
+
+		destination := filepath.Join(cfg.destination, fmt.Sprintf("%s - %s", author, title))
+		if _, err := os.Stat(destination); errors.Is(err, os.ErrNotExist) {
+			os.Mkdir(destination, os.ModePerm)
+		}
 
 		go func() {
 			for i := 0; i < len(cd.tracks); i++ {
@@ -53,7 +61,7 @@ func copyWithArg(cd cd) tea.Cmd {
 				}
 				program.Send(p)
 				src := filepath.Join(cfg.source, cd.tracks[i].name)
-				dst := filepath.Join(cfg.destination, cd.tracks[i].name)
+				dst := filepath.Join(destination, cd.tracks[i].name)
 				copyInternal(src, dst, p, &bytesDone)
 			}
 			program.Send(completed{
