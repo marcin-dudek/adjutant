@@ -14,12 +14,14 @@ var (
 
 	focused     = lipgloss.NewStyle().Foreground(highligh)
 	noStyle     = lipgloss.NewStyle()
-	borderStyle = lipgloss.NewStyle().Width(40).BorderStyle(lipgloss.NormalBorder()).BorderBottom(true).BorderForeground(subtle)
+	borderStyle = lipgloss.NewStyle().Width(40).Border(lipgloss.DoubleBorder(), true, false).BorderForeground(subtle)
 
 	helpStyle    = lipgloss.NewStyle().Foreground(subtle)
+	successStyle = lipgloss.NewStyle().Foreground(highligh)
+
 	blurredStyle = noStyle.Copy().PaddingLeft(4).Foreground(subtle)
 	focusedStyle = noStyle.Copy().PaddingLeft(4).Foreground(highligh)
-	titleStyle   = borderStyle.Copy().MarginTop(1).PaddingLeft(4)
+	titleStyle   = borderStyle.Copy().PaddingLeft(4)
 )
 
 func (m model) View() string {
@@ -46,27 +48,31 @@ func (m model) View() string {
 	}
 
 	if m.progress != nil {
+		fmt.Fprintln(&b, m.progressBar.View())
 		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Progress → %d/%d", m.progress.done, m.progress.total)))
 		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Progress → %.2f/%.2f", toMB(m.progress.doneBytes), toMB(m.progress.totalBytes))))
 		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Current  → %s", m.progress.current)))
 	}
 
 	if m.completed != nil {
-		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Author → %s", m.completed.author)))
-		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Title  → %s", m.completed.title)))
-		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Copied → %d", m.completed.total)))
-		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Size   → %.2f", toMB(m.completed.totalBytes))))
+		fmt.Fprintln(&b, m.progressBar.View())
+		fmt.Fprintln(&b, successStyle.Render(fmt.Sprintf("Author → %s", m.completed.author)))
+		fmt.Fprintln(&b, successStyle.Render(fmt.Sprintf("Title  → %s", m.completed.title)))
+		fmt.Fprintln(&b, successStyle.Render(fmt.Sprintf("Copied → %d", m.completed.total)))
+		fmt.Fprintln(&b, successStyle.Render(fmt.Sprintf("Size   → %.2f", toMB(m.completed.totalBytes))))
 	}
 
-	scanButton := &blurredStyle
-	exitButton := &blurredStyle
-	if m.focusIndex == 2 {
-		scanButton = &focusedStyle
+	if m.progress == nil {
+		scanButton := &blurredStyle
+		exitButton := &blurredStyle
+		if m.focusIndex == 2 {
+			scanButton = &focusedStyle
+		}
+		if m.focusIndex == 3 {
+			exitButton = &focusedStyle
+		}
+		fmt.Fprintf(&b, "\n%s %s\n", scanButton.Render("[ SCAN ]"), exitButton.Render("[ EXIT ]"))
 	}
-	if m.focusIndex == 3 {
-		exitButton = &focusedStyle
-	}
-	fmt.Fprintf(&b, "\n%s %s\n", scanButton.Render("[ SCAN ]"), exitButton.Render("[ EXIT ]"))
 
 	return b.String()
 }

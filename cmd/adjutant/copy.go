@@ -11,10 +11,10 @@ import (
 )
 
 var (
-	BufferSize = 1024 * 1024
+	BufferSize = 2024 * 2024
 )
 
-type progress struct {
+type progressInfo struct {
 	total      int
 	done       int
 	totalBytes int64
@@ -44,7 +44,7 @@ func copyWithArg(cd cd) tea.Cmd {
 
 		go func() {
 			for i := 0; i < len(cd.tracks); i++ {
-				p := progress{
+				p := progressInfo{
 					total:      len(cd.tracks),
 					totalBytes: totalBytes,
 					doneBytes:  bytesDone,
@@ -52,7 +52,7 @@ func copyWithArg(cd cd) tea.Cmd {
 					current:    cd.tracks[i].name,
 				}
 				program.Send(p)
-				//time.Sleep(10 * time.Second)
+				//time.Sleep(5 * time.Second)
 				src := "/home/manek/music/" + cd.tracks[i].name
 				dst := "/home/manek/src/tmp/" + cd.tracks[i].name
 				copyInternal(src, dst, p, &bytesDone)
@@ -68,7 +68,7 @@ func copyWithArg(cd cd) tea.Cmd {
 	}
 }
 
-func copyInternal(src, dst string, p progress, bytesDone *int64) error {
+func copyInternal(src, dst string, p progressInfo, bytesDone *int64) error {
 	source, err := os.Open(src)
 	if err != nil {
 		return err
@@ -100,7 +100,7 @@ func copyInternal(src, dst string, p progress, bytesDone *int64) error {
 			return err
 		}
 		*bytesDone += int64(n)
-		program.Send(progress{
+		program.Send(progressInfo{
 			totalBytes: p.totalBytes,
 			doneBytes:  *bytesDone,
 			total:      p.total,

@@ -1,16 +1,18 @@
 package main
 
 import (
+	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/textinput"
 )
 
 type model struct {
-	focusIndex int
-	author     textinput.Model
-	title      textinput.Model
-	progress   *progress
-	cd         *cd
-	completed  *completed
+	focusIndex  int
+	author      textinput.Model
+	title       textinput.Model
+	progressBar progress.Model
+	progress    *progressInfo
+	cd          *cd
+	completed   *completed
 }
 
 func initialModel() model {
@@ -28,11 +30,12 @@ func initialModel() model {
 	title.SetCursorMode(textinput.CursorStatic)
 
 	return model{
-		author:     author,
-		title:      title,
-		progress:   nil,
-		focusIndex: 2,
-		cd:         nil,
-		completed:  nil,
+		author:      author,
+		title:       title,
+		progressBar: progress.New(progress.WithDefaultGradient()),
+		progress:    nil,
+		focusIndex:  2,
+		cd:          nil,
+		completed:   nil,
 	}
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 	log "github.com/sirupsen/logrus"
 )
@@ -58,15 +59,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.progress = nil
 		m.completed = nil
 		return m, nil
-	case progress:
+	case progressInfo:
+		log.Info(log.Fields{
+			"progressInfo": msg,
+		})
+		cmd := m.progressBar.SetPercent(float64(msg.doneBytes) / float64(msg.totalBytes))
 		m.progress = &msg
 		m.cd = nil
-		return m, nil
+		return m, cmd
 	case completed:
+		m.focusIndex = Exit
 		m.progress = nil
 		m.cd = nil
 		m.completed = &msg
 		return m, nil
+	case progress.FrameMsg: // this is for progress bar animation
+		progressModel, cmd := m.progressBar.Update(msg)
+		m.progressBar = progressModel.(progress.Model)
+		return m, cmd
 	}
 
 	// Handle character input and blinking
