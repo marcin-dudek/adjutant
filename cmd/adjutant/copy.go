@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	BufferSize = 1_000_000
+	BufferSize = 1024 * 1024
 )
 
 type progress struct {
@@ -34,39 +34,28 @@ func copyWithArg(cd cd) tea.Cmd {
 	for _, t := range cd.tracks {
 		totalBytes += t.size
 	}
-	p := progress{
-		total:      len(cd.tracks),
-		done:       0,
-		totalBytes: totalBytes,
-		doneBytes:  0,
-		current:    cd.tracks[0].name,
-	}
 
 	return func() tea.Msg {
 		log.Info(log.Fields{
-			"cd-author": cd.author,
-			"tracks":    len(cd.tracks),
+			"cd-author":  cd.author,
+			"tracks":     len(cd.tracks),
+			"total-size": totalBytes,
 		})
+
 		go func() {
 			for i := 0; i < len(cd.tracks); i++ {
 				p := progress{
-					total:      p.total,
-					totalBytes: p.totalBytes,
+					total:      len(cd.tracks),
+					totalBytes: totalBytes,
 					doneBytes:  bytesDone,
 					done:       i + 1,
 					current:    cd.tracks[i].name,
 				}
 				program.Send(p)
-				copyInternal("/home/manek/music/"+cd.tracks[i].name, "/home/manek/src/tmp/"+cd.tracks[i].name)
-				bytesDone += cd.tracks[i].size
-
-				program.Send(progress{
-					total:      p.total,
-					totalBytes: p.totalBytes,
-					doneBytes:  bytesDone,
-					done:       i + 1,
-					current:    cd.tracks[i].name,
-				})
+				//time.Sleep(10 * time.Second)
+				src := "/home/manek/music/" + cd.tracks[i].name
+				dst := "/home/manek/src/tmp/" + cd.tracks[i].name
+				copyInternal(src, dst, p, &bytesDone)
 			}
 			program.Send(completed{
 				author:     cd.author,
@@ -75,12 +64,11 @@ func copyWithArg(cd cd) tea.Cmd {
 				totalBytes: totalBytes,
 			})
 		}()
-		program.Send(p)
 		return nil
 	}
 }
 
-func copyInternal(src, dst string) error {
+func copyInternal(src, dst string, p progress, bytesDone *int64) error {
 	source, err := os.Open(src)
 	if err != nil {
 		return err
@@ -111,6 +99,14 @@ func copyInternal(src, dst string) error {
 		if _, err := destination.Write(buf[:n]); err != nil {
 			return err
 		}
+		*bytesDone += int64(n)
+		program.Send(progress{
+			totalBytes: p.totalBytes,
+			doneBytes:  *bytesDone,
+			total:      p.total,
+			done:       p.done,
+			current:    p.current,
+		})
 		time.Sleep(100 * time.Millisecond)
 	}
 	return nil
