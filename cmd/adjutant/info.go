@@ -7,13 +7,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bogem/id3v2"
+	id3 "github.com/bogem/id3v2"
 	tea "github.com/charmbracelet/bubbletea"
 	log "github.com/sirupsen/logrus"
 )
 
 var (
-	options id3v2.Options = id3v2.Options{Parse: true}
+	options id3.Options = id3.Options{Parse: true}
 )
 
 func info() tea.Msg {
@@ -51,7 +51,7 @@ func info() tea.Msg {
 }
 
 func mp3details(file string) (string, string, time.Duration) {
-	mp3, _ := id3v2.Open(filepath.Join(cfg.source, file), options)
+	mp3, _ := id3.Open(filepath.Join(cfg.source, file), options)
 	defer mp3.Close()
 	length, _ := strconv.ParseInt(mp3.GetTextFrame(mp3.CommonID("Length")).Text, 10, 32)
 

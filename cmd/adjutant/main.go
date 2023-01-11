@@ -6,20 +6,16 @@ import (
 	"os"
 	"time"
 
-	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	log "github.com/sirupsen/logrus"
-
-	tint "github.com/lrstanley/bubbletint"
 )
 
 func (m model) Init() tea.Cmd {
-	return textinput.Blink
+	return nil
 }
 
 var (
 	program *tea.Program
-	theme   = tint.TintGithub
 	cfg     config
 )
 

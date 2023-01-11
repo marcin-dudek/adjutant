@@ -6,9 +6,8 @@ import (
 	"path/filepath"
 	"time"
 
-	log "github.com/sirupsen/logrus"
-
 	tea "github.com/charmbracelet/bubbletea"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
