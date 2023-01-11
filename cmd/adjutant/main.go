@@ -29,12 +29,14 @@ func main() {
 
 	log.SetOutput(f)
 	log.SetFormatter(&log.JSONFormatter{})
+	log.Info("AppStarted")
 	cfg = initConfig()
 	program = tea.NewProgram(initialModel())
 	if _, err := program.Run(); err != nil {
 		fmt.Printf("could not start program: %s\n", err)
 		os.Exit(1)
 	}
+	log.Info("AppExited")
 }
 
 func getLogFile() (*os.File, error) {
@@ -46,7 +48,7 @@ func getLogFile() (*os.File, error) {
 		}
 	}
 
-	file := fmt.Sprintf("%s/log_%s.txt", dir, time.Now().Format("20060102150405"))
+	file := fmt.Sprintf("%s/log_%s.txt", dir, time.Now().Format("20060102"))
 	f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, err
