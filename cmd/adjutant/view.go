@@ -9,19 +9,15 @@ import (
 )
 
 var (
-	subtle   = lipgloss.AdaptiveColor{Light: "#D9DCCF", Dark: "#383838"}
-	highligh = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#7D56F4"}
+	border = lipgloss.NewStyle().Width(40).Border(lipgloss.DoubleBorder(), true, false).BorderForeground(theme.BrightCyan())
 
-	focused     = lipgloss.NewStyle().Foreground(highligh)
-	noStyle     = lipgloss.NewStyle()
-	borderStyle = lipgloss.NewStyle().Width(40).Border(lipgloss.DoubleBorder(), true, false).BorderForeground(subtle)
+	helpStyle    = lipgloss.NewStyle().Foreground(theme.Fg())
+	successStyle = lipgloss.NewStyle().Foreground(theme.Fg())
 
-	helpStyle    = lipgloss.NewStyle().Foreground(subtle)
-	successStyle = lipgloss.NewStyle().Foreground(highligh)
+	blurred = lipgloss.NewStyle().Foreground(theme.Fg())
+	focused = lipgloss.NewStyle().Foreground(theme.BrightCyan())
 
-	blurredStyle = noStyle.Copy().PaddingLeft(4).Foreground(subtle)
-	focusedStyle = noStyle.Copy().PaddingLeft(4).Foreground(highligh)
-	titleStyle   = borderStyle.Copy().PaddingLeft(4)
+	titleStyle = border.Copy().PaddingLeft(4).Foreground(theme.BrightCyan())
 )
 
 func (m model) View() string {
@@ -63,13 +59,13 @@ func (m model) View() string {
 	}
 
 	if m.progress == nil {
-		scanButton := &blurredStyle
-		exitButton := &blurredStyle
-		if m.focusIndex == 2 {
-			scanButton = &focusedStyle
+		scanButton := &blurred
+		exitButton := &blurred
+		if m.focusIndex == Scan {
+			scanButton = &focused
 		}
-		if m.focusIndex == 3 {
-			exitButton = &focusedStyle
+		if m.focusIndex == Exit {
+			exitButton = &focused
 		}
 		fmt.Fprintf(&b, "\n%s %s\n", scanButton.Render("[ SCAN ]"), exitButton.Render("[ EXIT ]"))
 	}
@@ -83,8 +79,8 @@ func setFocused(input *textinput.Model) {
 }
 
 func setUnfocused(input *textinput.Model) {
-	input.PromptStyle = noStyle
-	input.TextStyle = noStyle
+	input.PromptStyle = blurred
+	input.TextStyle = blurred
 	input.Blur()
 }
 

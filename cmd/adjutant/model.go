@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/textinput"
+	tint "github.com/lrstanley/bubbletint"
+	"github.com/muesli/termenv"
 )
 
 type model struct {
@@ -29,10 +31,15 @@ func initialModel() model {
 	title.CharLimit = 64
 	title.SetCursorMode(textinput.CursorStatic)
 
+	progressBar := progress.New(
+		progress.WithColorProfile(termenv.TrueColor),
+		progress.WithScaledGradient(tint.Hex(theme.Fg()), tint.Hex(theme.BrightCyan())),
+	)
+
 	return model{
 		author:      author,
 		title:       title,
-		progressBar: progress.New(progress.WithDefaultGradient()),
+		progressBar: progressBar,
 		progress:    nil,
 		focusIndex:  2,
 		cd:          nil,

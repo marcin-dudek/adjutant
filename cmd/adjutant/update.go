@@ -68,7 +68,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.cd = nil
 		return m, cmd
 	case completed:
-		m.focusIndex = Exit
 		m.progress = nil
 		m.cd = nil
 		m.completed = &msg

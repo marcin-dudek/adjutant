@@ -9,6 +9,8 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	log "github.com/sirupsen/logrus"
+
+	tint "github.com/lrstanley/bubbletint"
 )
 
 func (m model) Init() tea.Cmd {
@@ -17,6 +19,7 @@ func (m model) Init() tea.Cmd {
 
 var (
 	program *tea.Program
+	theme   = tint.TintGithub
 )
 
 func main() {
