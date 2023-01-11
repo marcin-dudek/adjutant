@@ -60,21 +60,25 @@ func (m model) View() string {
 
 	if m.progress == nil {
 		scanButton := &blurred
+		copyButton := &blurred
 		exitButton := &blurred
-		if m.focusIndex == Scan {
+		if m.focusIndex == ScanIndex {
 			scanButton = &focused
 		}
-		if m.focusIndex == Exit {
+		if m.focusIndex == CopyIndex {
+			copyButton = &focused
+		}
+		if m.focusIndex == ExitIndex {
 			exitButton = &focused
 		}
-		fmt.Fprintf(&b, "\n%s %s\n", scanButton.Render("[ SCAN ]"), exitButton.Render("[ EXIT ]"))
+		fmt.Fprintf(&b, "\n%s %s %s\n", scanButton.Render("[ SCAN ]"), copyButton.Render("[ COPY ]"), exitButton.Render("[ EXIT ]"))
 	}
 
 	return b.String()
 }
 
 func setFocused(input *textinput.Model) {
-	input.PromptStyle = focused
+	input.PromptStyle = blurred
 	input.TextStyle = focused
 }
 

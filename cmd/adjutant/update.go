@@ -7,9 +7,10 @@ import (
 )
 
 var (
-	Scan  = 2
-	Exit  = 3
-	Lines = 3
+	ScanIndex = 2
+	CopyIndex = 3
+	ExitIndex = 4
+	Lines     = 4
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -28,11 +29,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "tab", "shift+tab", "enter", "up", "down":
 			s := msg.String()
 
-			if s == "enter" && m.focusIndex == Exit {
+			if s == "enter" && m.focusIndex == ExitIndex {
 				return m, tea.Quit
 			}
 
-			if s == "enter" && m.focusIndex == Scan {
+			if s == "enter" && m.focusIndex == CopyIndex {
+				return m, copyWithArg(*m.cd)
+			}
+
+			if s == "enter" && m.focusIndex == ScanIndex {
 				return m, info
 			}
 
@@ -51,6 +56,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			log.Info(log.Fields{"msg": s, "index": m.focusIndex, "step": "after"})
 			return m, cmd
+
+		case "left":
+			if m.focusIndex > 1 { // navigate only when on buttons
+				m.focusIndex = moveDown(m.cd != nil, m.focusIndex)
+				return m, nil
+			}
+		case "right":
+			if m.focusIndex > 1 { // navigate only when on buttons
+				m.focusIndex = moveUp(m.cd != nil, m.focusIndex)
+				return m, nil
+			}
 		}
 	case cd:
 		m.cd = &msg
@@ -68,6 +84,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.cd = nil
 		return m, cmd
 	case completed:
+		m.focusIndex = ExitIndex
 		m.progress = nil
 		m.cd = nil
 		m.completed = &msg
@@ -97,10 +114,10 @@ func moveUp(scanned bool, index int) int {
 		return index + 1
 	}
 
-	if index == Scan {
-		return Exit
+	if index == ScanIndex {
+		return ExitIndex
 	} else {
-		return Scan
+		return ScanIndex
 	}
 }
 
@@ -112,9 +129,9 @@ func moveDown(scanned bool, index int) int {
 		return index - 1
 	}
 
-	if index == Scan {
-		return Exit
+	if index == ScanIndex {
+		return ExitIndex
 	} else {
-		return Scan
+		return ScanIndex
 	}
 }
