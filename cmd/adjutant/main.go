@@ -20,6 +20,7 @@ func (m model) Init() tea.Cmd {
 var (
 	program *tea.Program
 	theme   = tint.TintGithub
+	cfg     config
 )
 
 func main() {
@@ -32,6 +33,7 @@ func main() {
 
 	log.SetOutput(f)
 	log.SetFormatter(&log.JSONFormatter{})
+	cfg = initConfig()
 	program = tea.NewProgram(initialModel())
 	if _, err := program.Run(); err != nil {
 		fmt.Printf("could not start program: %s\n", err)

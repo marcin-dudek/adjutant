@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"os"
+	"path/filepath"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -52,9 +53,8 @@ func copyWithArg(cd cd) tea.Cmd {
 					current:    cd.tracks[i].name,
 				}
 				program.Send(p)
-				//time.Sleep(5 * time.Second)
-				src := "/home/manek/music/" + cd.tracks[i].name
-				dst := "/home/manek/src/tmp/" + cd.tracks[i].name
+				src := filepath.Join(cfg.source, cd.tracks[i].name)
+				dst := filepath.Join(cfg.destination, cd.tracks[i].name)
 				copyInternal(src, dst, p, &bytesDone)
 			}
 			program.Send(completed{

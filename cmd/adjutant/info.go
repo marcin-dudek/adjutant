@@ -13,12 +13,11 @@ import (
 )
 
 var (
-	source  string        = "/home/manek/music/"
 	options id3v2.Options = id3v2.Options{Parse: true}
 )
 
 func info() tea.Msg {
-	files, err := os.ReadDir(source)
+	files, err := os.ReadDir(cfg.source)
 	if err != nil {
 		return err
 	}
@@ -52,7 +51,7 @@ func info() tea.Msg {
 }
 
 func mp3details(file string) (string, string, time.Duration) {
-	mp3, _ := id3v2.Open(filepath.Join(source, file), options)
+	mp3, _ := id3v2.Open(filepath.Join(cfg.source, file), options)
 	defer mp3.Close()
 	length, _ := strconv.ParseInt(mp3.GetTextFrame(mp3.CommonID("Length")).Text, 10, 32)
 
