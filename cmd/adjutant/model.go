@@ -8,9 +8,9 @@ type model struct {
 	focusIndex int
 	author     textinput.Model
 	title      textinput.Model
-	copying    bool
-	progress   int
+	progress   *progress
 	cd         *cd
+	completed  *completed
 }
 
 func initialModel() model {
@@ -30,8 +30,9 @@ func initialModel() model {
 	return model{
 		author:     author,
 		title:      title,
-		copying:    false,
+		progress:   nil,
 		focusIndex: 2,
 		cd:         nil,
+		completed:  nil,
 	}
 }

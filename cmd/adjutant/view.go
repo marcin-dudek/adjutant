@@ -26,7 +26,7 @@ func (m model) View() string {
 	var b strings.Builder
 	fmt.Fprintln(&b, titleStyle.Render("Adjutant"))
 
-	if !m.copying && m.cd != nil {
+	if m.cd != nil {
 		if m.focusIndex == 0 {
 			setFocused(&m.author)
 			setUnfocused(&m.title)
@@ -41,12 +41,21 @@ func (m model) View() string {
 		fmt.Fprintln(&b, m.author.View())
 		fmt.Fprintln(&b, m.title.View())
 		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Files  → %d", len(m.cd.tracks))))
-		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Size   → %.2f MB", float64(m.cd.size)/(1000*1000))))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Size   → %.2f MB", toMB(m.cd.size))))
 		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Length → %s", m.cd.length)))
 	}
 
-	if m.copying {
-		fmt.Fprintln(&b, blurredStyle.Render("Progress ..."))
+	if m.progress != nil {
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Progress → %d/%d", m.progress.done, m.progress.total)))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Progress → %.2f/%.2f", toMB(m.progress.doneBytes), toMB(m.progress.totalBytes))))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Current  → %s", m.progress.current)))
+	}
+
+	if m.completed != nil {
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Author → %s", m.completed.author)))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Title  → %s", m.completed.title)))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Copied → %d", m.completed.total)))
+		fmt.Fprintln(&b, helpStyle.Render(fmt.Sprintf("Size   → %.2f", toMB(m.completed.totalBytes))))
 	}
 
 	scanButton := &blurredStyle
@@ -71,4 +80,8 @@ func setUnfocused(input *textinput.Model) {
 	input.PromptStyle = noStyle
 	input.TextStyle = noStyle
 	input.Blur()
+}
+
+func toMB(v int64) float64 {
+	return float64(v) / (1000 * 1000)
 }

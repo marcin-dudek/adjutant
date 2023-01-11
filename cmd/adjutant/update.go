@@ -20,7 +20,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "alt+s":
 			return m, info
 		case "alt+e":
-			m.copying = true
+			//m.copying = true
 			return m, copyWithArg(*m.cd)
 
 		// Set focus to next input
@@ -55,6 +55,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.cd = &msg
 		m.author.SetValue(msg.author)
 		m.title.SetValue(msg.title)
+		m.progress = nil
+		m.completed = nil
+		return m, nil
+	case progress:
+		m.progress = &msg
+		m.cd = nil
+		return m, nil
+	case completed:
+		m.progress = nil
+		m.cd = nil
+		m.completed = &msg
 		return m, nil
 	}
 
