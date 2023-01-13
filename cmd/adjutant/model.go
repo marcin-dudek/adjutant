@@ -18,31 +18,27 @@ type model struct {
 }
 
 func initialModel() model {
-	var author = textinput.New()
-	author.Prompt = "Author → "
-	author.Placeholder = "Author"
-	author.CharLimit = 64
-	author.SetCursorMode(textinput.CursorStatic)
-	author.Focus()
-
-	var title = textinput.New()
-	title.Prompt = "Title  → "
-	title.Placeholder = "Title"
-	title.CharLimit = 64
-	title.SetCursorMode(textinput.CursorStatic)
-
 	progressBar := progress.New(
 		progress.WithColorProfile(termenv.TrueColor),
 		progress.WithScaledGradient(tint.Hex(theme.Fg()), tint.Hex(theme.BrightCyan())),
 	)
 
 	return model{
-		author:      author,
-		title:       title,
+		author:      newInput("Author → "),
+		title:       newInput("Title  → "),
 		progressBar: progressBar,
 		progress:    nil,
 		focusIndex:  2,
 		cd:          nil,
 		completed:   nil,
 	}
+}
+
+func newInput(prompt string) textinput.Model {
+	input := textinput.New()
+	input.Prompt = prompt
+	input.CharLimit = 64
+	input.PromptStyle = normal
+	input.SetCursorMode(textinput.CursorStatic)
+	return input
 }

@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 	tint "github.com/lrstanley/bubbletint"
 )
@@ -24,37 +24,43 @@ func (m model) View() string {
 	fmt.Fprintln(&b, titleStyle.Render("Adjutant"))
 
 	if m.cd != nil {
-		if m.focusIndex == 0 {
-			setFocused(&m.author)
-			setUnfocused(&m.title)
-		} else if m.focusIndex == 1 {
-			setFocused(&m.title)
-			setUnfocused(&m.author)
-		} else {
-			setUnfocused(&m.author)
-			setUnfocused(&m.title)
+		authorStyle := normal
+		titleStyle := normal
+		cmd := func() {
+			m.author.Blur()
+			m.title.Blur()
 		}
+		if m.focusIndex == 0 {
+			authorStyle = focused
+			cmd = m.title.Blur
+		} else if m.focusIndex == 1 {
+			titleStyle = focused
+			cmd = m.author.Blur
+		}
+		m.author.TextStyle = authorStyle
+		m.title.TextStyle = titleStyle
+		cmd()
 
 		fmt.Fprintln(&b, m.author.View())
 		fmt.Fprintln(&b, m.title.View())
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Files  → %d", len(m.cd.tracks))))
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Size   → %.2f MB", toMB(m.cd.size))))
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Length → %s", m.cd.length)))
+		render(&b, "Files  → %d", len(m.cd.tracks))
+		render(&b, "Size   → %.2f MB", toMB(m.cd.size))
+		render(&b, "Length → %s", m.cd.length)
 	}
 
 	if m.progress != nil {
 		fmt.Fprintln(&b, m.progressBar.View())
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Progress → %d/%d", m.progress.done, m.progress.total)))
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Progress → %.2f/%.2f MB", toMB(m.progress.doneBytes), toMB(m.progress.totalBytes))))
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Current  → %s", m.progress.current)))
+		render(&b, "Progress → %d/%d", m.progress.done, m.progress.total)
+		render(&b, "Progress → %.2f/%.2f MB", toMB(m.progress.doneBytes), toMB(m.progress.totalBytes))
+		render(&b, "Current  → %s", m.progress.current)
 	}
 
 	if m.completed != nil {
 		fmt.Fprintln(&b, m.progressBar.View())
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Author → %s", m.completed.author)))
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Title  → %s", m.completed.title)))
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Copied → %d", m.completed.total)))
-		fmt.Fprintln(&b, normal.Render(fmt.Sprintf("Size   → %.2f MB", toMB(m.completed.totalBytes))))
+		render(&b, "Author → %s", m.completed.author)
+		render(&b, "Title  → %s", m.completed.title)
+		render(&b, "Copied → %d", m.completed.total)
+		render(&b, "Size   → %.2f MB", toMB(m.completed.totalBytes))
 	}
 
 	if m.progress == nil {
@@ -76,17 +82,10 @@ func (m model) View() string {
 	return b.String()
 }
 
-func setFocused(input *textinput.Model) {
-	input.PromptStyle = normal
-	input.TextStyle = focused
-}
-
-func setUnfocused(input *textinput.Model) {
-	input.PromptStyle = normal
-	input.TextStyle = normal
-	input.Blur()
-}
-
 func toMB(v int64) float64 {
 	return float64(v) / (1000 * 1000)
+}
+
+func render(w io.Writer, format string, a ...any) {
+	fmt.Fprintln(w, normal.Render(fmt.Sprintf(format, a...)))
 }
