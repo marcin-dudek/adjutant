@@ -23,8 +23,10 @@ func initConfig() config {
 		source:      viper.GetString("source"),
 		destination: viper.GetString("destination"),
 	}
+
 	log.Info(log.Fields{
-		"config": cfg,
+		"source":      cfg.source,
+		"destination": cfg.destination,
 	})
 	return cfg
 }

@@ -26,20 +26,20 @@ func (m model) View() string {
 	if m.cd != nil {
 		authorStyle := normal
 		titleStyle := normal
-		cmd := func() {
+		blur := func() {
 			m.author.Blur()
 			m.title.Blur()
 		}
 		if m.focusIndex == 0 {
 			authorStyle = focused
-			cmd = m.title.Blur
+			blur = m.title.Blur
 		} else if m.focusIndex == 1 {
 			titleStyle = focused
-			cmd = m.author.Blur
+			blur = m.author.Blur
 		}
 		m.author.TextStyle = authorStyle
 		m.title.TextStyle = titleStyle
-		cmd()
+		blur()
 
 		fmt.Fprintln(&b, m.author.View())
 		fmt.Fprintln(&b, m.title.View())

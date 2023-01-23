@@ -22,7 +22,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "alt+s":
 			return m, info
 		case "alt+e":
-			//m.copying = true
 			return m, copyWithArg(*m.cd, m.author.Value(), m.title.Value())
 
 		// Set focus to next input

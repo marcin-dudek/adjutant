@@ -20,7 +20,7 @@ var (
 )
 
 func main() {
-	f, err := getLogFile()
+	f, err := initLogFile()
 	if err != nil {
 		fmt.Println(err)
 		panic(err)
@@ -39,7 +39,7 @@ func main() {
 	log.Info("AppExited")
 }
 
-func getLogFile() (*os.File, error) {
+func initLogFile() (*os.File, error) {
 	dir := "logs"
 	if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
 		err := os.Mkdir(dir, os.ModePerm)
