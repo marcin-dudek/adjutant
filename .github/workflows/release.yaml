@@ -26,12 +26,6 @@ jobs:
         name: adjutant-windows
         path: adjutant.exe
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: changelog
-        path: CHANGELOG.md
-
   build-ubuntu:
     name: build-ubuntu
     runs-on: ubuntu-latest
@@ -65,10 +59,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: adjutant-ubuntu
-      - name: download changelog
-        uses: actions/download-artifact@v3
-        with:
-          name: changelog
       - name: create release
         uses: marvinpinto/action-automatic-releases@latest
         id: create_release
@@ -77,9 +67,8 @@ jobs:
           prerelease: false
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           files:
-            adjutant.exe
-            adjutant
-            CHANGELOG.md
+            ./adjutant.exe
+            ./adjutant
 
       # - name: upload windows asset
       #   uses: actions/upload-release-asset@v1
