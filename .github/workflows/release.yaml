@@ -67,24 +67,5 @@ jobs:
           prerelease: false
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           files:
-            ./adjutant.exe
-            ./adjutant
-
-      # - name: upload windows asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./adjutant.exe
-      #     asset_name: adjutant.exe
-      #     asset_content_type: application/exe
-      # - name: upload ubuntu asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./adjutant
-      #     asset_name: adjutant
-      #     asset_content_type: application/octet-stream
+            adjutant-windows
+            adjutant-ubuntu
