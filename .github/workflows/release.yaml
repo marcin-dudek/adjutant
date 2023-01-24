@@ -62,8 +62,8 @@ jobs:
       - name: download artifacts
         uses: actions/download-artifact@v3
       
-      - name: list assets
-        run: ls *
+      # - name: list assets
+      #   run: ls *
       
       - name: create release
         uses: marvinpinto/action-automatic-releases@latest
