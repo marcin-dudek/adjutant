@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-windows:
-    name: build
+    name: build-windows
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
@@ -33,7 +33,7 @@ jobs:
         path: CHANGELOG.md
 
   build-ubuntu:
-    name: build
+    name: build-ubuntu
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -70,31 +70,32 @@ jobs:
         with:
           name: changelog
       - name: create release
-        uses: actions/create-release@v1
+        uses: marvinpinto/action-automatic-releases@latest
         id: create_release
         with:
           draft: false
           prerelease: false
-          release_name: ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref }}
-          body_path: CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: upload windows asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./adjutant.exe
-          asset_name: adjutant.exe
-          asset_content_type: application/exe
-      - name: upload ubuntu asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./adjutant
-          asset_name: adjutant
-          asset_content_type: application/octet-stream
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          files:
+            adjutant.exe
+            adjutant
+            CHANGELOG.md
+
+      # - name: upload windows asset
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./adjutant.exe
+      #     asset_name: adjutant.exe
+      #     asset_content_type: application/exe
+      # - name: upload ubuntu asset
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./adjutant
+      #     asset_name: adjutant
+      #     asset_content_type: application/octet-stream
