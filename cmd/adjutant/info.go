@@ -23,7 +23,6 @@ func info() tea.Msg {
 		var size int64
 		var total, length time.Duration
 		var artist, title string
-		time.Sleep(15 * time.Second)
 		for _, file := range files {
 			info, e := file.Info()
 			log.Info(log.Fields{
