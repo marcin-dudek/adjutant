@@ -26,7 +26,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: linux-${{matrix.arch}}
-        path: adjutant-${{matrix.arch}}
+        path: adjutant-linux-${{matrix.arch}}
 
   build-windows:
     strategy:

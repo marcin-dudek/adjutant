@@ -18,8 +18,9 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+        os: [windows, linux]
+        arch: [amd64, 386]
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
 
@@ -29,5 +30,6 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: go build -v ./...
+      run: env GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go build -v ./...
+
 
