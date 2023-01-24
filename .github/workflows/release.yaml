@@ -29,11 +29,25 @@ jobs:
         name: adjutant
         path: adjutant.exe
 
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: changelog
+        path: CHANGELOG.md
+
   release:
     name: release
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: download app
+        uses: actions/download-artifact@v3
+        with:
+          name: adjutant
+      - name: download changelog
+        uses: actions/download-artifact@v3
+        with:
+          name: changelog
       - name: create release
         uses: actions/create-release@v1
         id: create_release
@@ -45,10 +59,6 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - name: download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: adjutant
       - name: upload asset
         uses: actions/upload-release-asset@v1
         env:
