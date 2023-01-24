@@ -6,10 +6,9 @@ on:
       - '*'
 
 jobs:
-  build:
+  build-linux:
     strategy:
       matrix:
-        os: [linux, windows]
         arch: [amd64, 386]
     runs-on: ubuntu-latest
     steps:
@@ -21,16 +20,20 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: env GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go build -o adjutant-${{matrix.os}}-${{matrix.arch}} -v ./...
+      run: env GOOS=linux GOARCH=${{matrix.arch}} go build -o adjutant-${{matrix.arch}} -v ./...
+
+    - name: rename
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: adjutant-${{matrix.os}}-${{matrix.arch}}
-        path: adjutant-${{matrix.os}}-${{matrix.arch}}*
+        name: adjutant-linux-${{matrix.arch}}
+        path: adjutant-${{matrix.arch}}
 
   build-windows:
-    name: build-windows
+    strategy:
+      matrix:
+        arch: [amd64, 386]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -41,41 +44,27 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: env GOOS=windows GOARCH=amd64 go build -v ./...
-    
+      run: env GOOS=windows GOARCH=${{matrix.arch}} go build -o adjutant-${{matrix.arch}}.exe -v ./...
+
+    - name: rename
+
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: adjutant-windows
-        path: adjutant.exe
-
-  build-ubuntu:
-    name: build-ubuntu
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.19
-
-    - name: Build
-      run: go build -v ./...
-    
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: adjutant-ubuntu
-        path: adjutant
+        name: adjutant-win-${{matrix.arch}}
+        path: adjutant-${{matrix.arch}}.exe
 
   release:
     name: release
-    needs: [build-windows, build-ubuntu, build]
+    needs: [build-windows, build-linux]
     runs-on: ubuntu-latest
     steps:
       - name: download artifacts
         uses: actions/download-artifact@v3
+      
+      - name: list assets
+        run: ls *
+      
       - name: create release
         uses: marvinpinto/action-automatic-releases@latest
         id: create_release
