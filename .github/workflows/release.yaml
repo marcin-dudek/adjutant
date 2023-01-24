@@ -6,11 +6,8 @@ on:
       - '*'
 
 jobs:
-  build:
+  build-windows:
     name: build
-    # strategy:
-    #   matrix:
-    #     os: [ubuntu-latest, windows-latest]
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
@@ -26,7 +23,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: adjutant
+        name: adjutant-windows
         path: adjutant.exe
 
     - name: Upload artifact
@@ -35,15 +32,39 @@ jobs:
         name: changelog
         path: CHANGELOG.md
 
-  release:
-    name: release
-    needs: build
+  build-ubuntu:
+    name: build
     runs-on: ubuntu-latest
     steps:
-      - name: download app
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+
+    - name: Build
+      run: go build -v ./...
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: adjutant-ubuntu
+        path: adjutant
+
+  release:
+    name: release
+    needs: [build-windows, build-ubuntu]
+    runs-on: ubuntu-latest
+    steps:
+      - name: download widows app
         uses: actions/download-artifact@v3
         with:
-          name: adjutant
+          name: adjutant-windows
+      - name: download linux app
+        uses: actions/download-artifact@v3
+        with:
+          name: adjutant-ubuntu
       - name: download changelog
         uses: actions/download-artifact@v3
         with:
@@ -59,7 +80,7 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - name: upload asset
+      - name: upload windows asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -68,3 +89,12 @@ jobs:
           asset_path: ./adjutant.exe
           asset_name: adjutant.exe
           asset_content_type: application/exe
+      - name: upload ubuntu asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./adjutant
+          asset_name: adjutant
+          asset_content_type: application/octet-stream
