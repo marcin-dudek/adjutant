@@ -25,7 +25,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: adjutant-linux-${{matrix.arch}}
+        name: linux-${{matrix.arch}}
         path: adjutant-${{matrix.arch}}
 
   build-windows:
@@ -47,7 +47,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: adjutant-win-${{matrix.arch}}
+        name: win-${{matrix.arch}}
         path: adjutant-${{matrix.arch}}.exe
 
   release:
@@ -69,4 +69,4 @@ jobs:
           prerelease: false
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           files:
-            ./adjutant*
+            ./**/adjutant*
