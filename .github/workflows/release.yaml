@@ -59,6 +59,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: adjutant-ubuntu
+      - run: ls *
       - name: create release
         uses: marvinpinto/action-automatic-releases@latest
         id: create_release
@@ -67,5 +68,4 @@ jobs:
           prerelease: false
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           files:
-            adjutant-windows
-            adjutant-ubuntu
+            */adjutant*
