@@ -22,8 +22,6 @@ jobs:
     - name: Build
       run: env GOOS=linux GOARCH=${{matrix.arch}} go build -o adjutant-${{matrix.arch}} -v ./...
 
-    - name: rename
-
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
@@ -46,8 +44,6 @@ jobs:
     - name: Build
       run: env GOOS=windows GOARCH=${{matrix.arch}} go build -o adjutant-${{matrix.arch}}.exe -v ./...
 
-    - name: rename
-
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
@@ -62,8 +58,8 @@ jobs:
       - name: download artifacts
         uses: actions/download-artifact@v3
       
-      # - name: list assets
-      #   run: ls *
+      - name: list assets
+        run: ls *
       
       - name: create release
         uses: marvinpinto/action-automatic-releases@latest
