@@ -68,4 +68,4 @@ jobs:
           prerelease: false
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           files:
-            */adjutant*
+            ./adjutant*
