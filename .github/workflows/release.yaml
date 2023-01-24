@@ -29,11 +29,12 @@ jobs:
         name: adjutant
         path: adjutant.exe
 
-  build_release:
-    name: build_release
+  release:
+    name: release
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: release
+      - name: create release
         uses: actions/create-release@v1
         id: create_release
         with:
@@ -44,11 +45,11 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - name: get artifact
+      - name: download artifact
         uses: actions/download-artifact@v3
         with:
           name: adjutant
-      - name: upload artifact
+      - name: upload asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
