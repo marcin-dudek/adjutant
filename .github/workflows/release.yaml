@@ -1,0 +1,59 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: build
+    # strategy:
+    #   matrix:
+    #     os: [ubuntu-latest, windows-latest]
+    # runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+
+    - name: Build
+      run: go build -v ./...
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: adjutant
+        path: adjutant.exe
+
+  build_release:
+    name: build_release
+    runs-on: ubuntu-latest
+    steps:
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: get artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: adjutant
+      - name: upload artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./adjutant.exe
+          asset_name: adjutant.exe
+          asset_content_type: application/exe
