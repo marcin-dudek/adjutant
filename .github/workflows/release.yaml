@@ -20,7 +20,7 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: env GOOS=linux GOARCH=${{matrix.arch}} go build -o adjutant-${{matrix.arch}} -v ./...
+      run: env GOOS=linux GOARCH=${{matrix.arch}} go build -o adjutant-linux-${{matrix.arch}} -v ./...
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
