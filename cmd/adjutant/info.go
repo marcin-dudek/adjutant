@@ -17,37 +17,38 @@ var (
 )
 
 func info() tea.Msg {
-	files, err := os.ReadDir(cfg.source)
-	if err != nil {
-		return err
-	}
-
-	var tracks []track
-	var size int64
-	var total, length time.Duration
-	var artist, title string
-	for _, file := range files {
-		info, e := file.Info()
-		log.Info(log.Fields{
-			"name": info.Name(),
-			"size": info.Size(),
-			"dir":  info.IsDir(),
-		})
-		if !file.IsDir() && strings.HasSuffix(file.Name(), "mp3") && e == nil {
-			size += info.Size()
-			artist, title, length = mp3details(file.Name())
-			total += length
-			tracks = append(tracks, track{name: file.Name(), size: info.Size()})
+	go func() {
+		files, _ := os.ReadDir(cfg.source)
+		var tracks []track
+		var size int64
+		var total, length time.Duration
+		var artist, title string
+		time.Sleep(15 * time.Second)
+		for _, file := range files {
+			info, e := file.Info()
+			log.Info(log.Fields{
+				"name": info.Name(),
+				"size": info.Size(),
+				"dir":  info.IsDir(),
+			})
+			if !file.IsDir() && strings.HasSuffix(file.Name(), "mp3") && e == nil {
+				size += info.Size()
+				artist, title, length = mp3details(file.Name())
+				total += length
+				tracks = append(tracks, track{name: file.Name(), size: info.Size()})
+			}
 		}
-	}
 
-	return cd{
-		author: artist,
-		title:  title,
-		size:   size,
-		tracks: tracks,
-		length: total,
-	}
+		program.Send(cd{
+			author: artist,
+			title:  title,
+			size:   size,
+			tracks: tracks,
+			length: total,
+		})
+	}()
+
+	return scanning{}
 }
 
 func mp3details(file string) (string, string, time.Duration) {
@@ -75,4 +76,7 @@ type cd struct {
 type track struct {
 	name string
 	size int64
+}
+
+type scanning struct {
 }

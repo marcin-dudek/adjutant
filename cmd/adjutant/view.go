@@ -48,6 +48,10 @@ func (m model) View() string {
 		render(&b, "Length → %s", m.cd.length)
 	}
 
+	if m.scanning {
+		render(&b, "%s reading", m.spinner.View())
+	}
+
 	if m.progress != nil {
 		fmt.Fprintln(&b, m.progressBar.View())
 		render(&b, "Progress → %d/%d", m.progress.done, m.progress.total)
@@ -63,7 +67,7 @@ func (m model) View() string {
 		render(&b, "Size   → %.2f MB", toMB(m.completed.totalBytes))
 	}
 
-	if m.progress == nil {
+	if m.progress == nil && !m.scanning {
 		scanButton := &normal
 		copyButton := &normal
 		exitButton := &normal

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/charmbracelet/bubbles/progress"
+	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	log "github.com/sirupsen/logrus"
 )
@@ -67,12 +68,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 		}
+	case scanning:
+		m.scanning = true
+		m.cd = nil
+		m.progress = nil
+		m.completed = nil
+		return m, m.spinner.Tick
 	case cd:
 		m.cd = &msg
 		m.author.SetValue(msg.author)
 		m.title.SetValue(msg.title)
 		m.progress = nil
 		m.completed = nil
+		m.scanning = false
 		return m, nil
 	case progressInfo:
 		log.Info(log.Fields{
@@ -91,6 +99,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case progress.FrameMsg: // this is for progress bar animation
 		progressModel, cmd := m.progressBar.Update(msg)
 		m.progressBar = progressModel.(progress.Model)
+		return m, cmd
+	case spinner.TickMsg: // this is for spinner animation
+		spinner, cmd := m.spinner.Update(msg)
+		m.spinner = spinner
 		return m, cmd
 	}
 
