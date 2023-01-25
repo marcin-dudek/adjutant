@@ -57,7 +57,17 @@ jobs:
     steps:
       - name: download artifacts
         uses: actions/download-artifact@v3
-      
+        path: artifacts
+
+      - name: list assets
+        run: ls -R
+
+      - name: rename
+        working-directory: artifacts
+        run: |
+          rename amd64 x64 *
+          rename 386 x86 *
+
       - name: list assets
         run: ls *
       
