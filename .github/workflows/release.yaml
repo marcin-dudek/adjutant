@@ -20,13 +20,13 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: env GOOS=linux GOARCH=${{matrix.arch}} go build -o adjutant-linux-${{matrix.arch}} -v ./...
+      run: env GOOS=linux GOARCH=${{matrix.arch}} go build -o adjutant -v ./...
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: linux-${{matrix.arch}}
-        path: adjutant-linux-${{matrix.arch}}
+        name: adjutant-linux-${{matrix.arch}}
+        path: adjutant
 
   build-windows:
     strategy:
@@ -42,13 +42,13 @@ jobs:
         go-version: 1.19
 
     - name: Build
-      run: env GOOS=windows GOARCH=${{matrix.arch}} go build -o adjutant-${{matrix.arch}}.exe -v ./...
+      run: env GOOS=windows GOARCH=${{matrix.arch}} go build -o adjutant.exe -v ./...
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: win-${{matrix.arch}}
-        path: adjutant-${{matrix.arch}}.exe
+        name: adjutant-win-${{matrix.arch}}
+        path: adjutant.exe
 
   release:
     name: release
@@ -57,20 +57,9 @@ jobs:
     steps:
       - name: download artifacts
         uses: actions/download-artifact@v3
-        with:
-          path: artifacts
 
       - name: list assets
         run: ls -R
-
-      - name: rename
-        working-directory: artifacts
-        run: |
-          rename amd64 x64 *
-          rename 386 x86 *
-
-      - name: list assets
-        run: ls *
       
       - name: create release
         uses: marvinpinto/action-automatic-releases@latest
@@ -80,4 +69,4 @@ jobs:
           prerelease: false
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           files:
-            ./**/adjutant*
+            ./**
