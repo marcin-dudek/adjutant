@@ -57,7 +57,8 @@ jobs:
     steps:
       - name: download artifacts
         uses: actions/download-artifact@v3
-        path: artifacts
+        with:
+          path: artifacts
 
       - name: list assets
         run: ls -R
