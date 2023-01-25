@@ -6,9 +6,10 @@ on:
       - '*'
 
 jobs:
-  build-linux:
+  build:
     strategy:
       matrix:
+        os: [linux, windows]
         arch: [amd64, 386]
     runs-on: ubuntu-latest
     steps:
@@ -18,6 +19,19 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.19
+
+    - uses: kanga333/variable-mapper@master
+      with:
+        key: "${{matrix.os}}"
+        map: |
+          {
+            "linux": {
+              "suffix": ""
+            },
+            "windows": {
+              "suffix": ".exe"
+            }
+          }
 
     - uses: kanga333/variable-mapper@master
       with:
@@ -33,52 +47,17 @@ jobs:
           }
 
     - name: Build
-      run: env GOOS=linux GOARCH=${{matrix.arch}} go build -o adjutant-${{env.os}} -v ./...
+      run: env GOOS=${{matrix.os}} GOARCH=${{matrix.arch}} go build -o adjutant-${{env.os}}${{env.suffix}} -v ./...
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: adjutant-linux-${{env.os}}
-        path: adjutant-${{env.os}}
-
-  build-windows:
-    strategy:
-      matrix:
-        arch: [amd64, 386]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.19
-
-    - uses: kanga333/variable-mapper@master
-      with:
-        key: "${{matrix.arch}}"
-        map: |
-          {
-            "amd64": {
-              "os": "x64"
-            },
-            "386": {
-              "os": "x86"
-            }
-          }
-
-    - name: Build
-      run: env GOOS=windows GOARCH=${{matrix.arch}} go build -o adjutant-${{env.os}}.exe -v ./...
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: adjutant-win-${{env.os}}
-        path: adjutant-${{env.os}}.exe
+        name: adjutant-${{matrix.os}}-${{env.os}}
+        path: adjutant-${{env.os}}${{env.suffix}}
 
   release:
     name: release
-    needs: [build-windows, build-linux]
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: download artifacts
