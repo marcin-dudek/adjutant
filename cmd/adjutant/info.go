@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	id3 "github.com/bogem/id3v2"
@@ -18,25 +18,33 @@ var (
 
 func info() tea.Msg {
 	go func() {
-		files, _ := os.ReadDir(cfg.source)
 		var tracks []track
 		var size int64
 		var total, length time.Duration
 		var artist, title string
-		for _, file := range files {
-			info, e := file.Info()
+
+		filepath.Walk(cfg.source, func(path string, info os.FileInfo, err error) error {
+
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
 			log.Info(log.Fields{
 				"name": info.Name(),
 				"size": info.Size(),
 				"dir":  info.IsDir(),
+				"path": path,
 			})
-			if !file.IsDir() && strings.HasSuffix(file.Name(), "mp3") && e == nil {
+
+			if !info.IsDir() && filepath.Ext(path) == ".mp3" {
 				size += info.Size()
-				artist, title, length = mp3details(file.Name())
+				artist, title, length = mp3details(path)
 				total += length
-				tracks = append(tracks, track{name: file.Name(), size: info.Size()})
+				tracks = append(tracks, track{name: info.Name(), size: info.Size(), path: path})
 			}
-		}
+
+			return nil
+		})
 
 		program.Send(cd{
 			author: artist,
@@ -51,7 +59,7 @@ func info() tea.Msg {
 }
 
 func mp3details(file string) (string, string, time.Duration) {
-	mp3, _ := id3.Open(filepath.Join(cfg.source, file), options)
+	mp3, _ := id3.Open(file, options)
 	defer mp3.Close()
 	length, _ := strconv.ParseInt(mp3.GetTextFrame(mp3.CommonID("Length")).Text, 10, 32)
 
@@ -74,6 +82,7 @@ type cd struct {
 
 type track struct {
 	name string
+	path string
 	size int64
 }
 

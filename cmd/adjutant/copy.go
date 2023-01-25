@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	log "github.com/sirupsen/logrus"
@@ -60,9 +59,8 @@ func copyWithArg(cd cd, author, title string) tea.Cmd {
 					current:    cd.tracks[i].name,
 				}
 				program.Send(p)
-				src := filepath.Join(cfg.source, cd.tracks[i].name)
 				dst := filepath.Join(destination, cd.tracks[i].name)
-				copyInternal(src, dst, p, &bytesDone)
+				copyInternal(cd.tracks[i].path, dst, p, &bytesDone)
 			}
 			program.Send(completed{
 				author:     cd.author,
@@ -114,7 +112,6 @@ func copyInternal(src, dst string, p progressInfo, bytesDone *int64) error {
 			done:       p.done,
 			current:    p.current,
 		})
-		time.Sleep(100 * time.Millisecond)
 	}
 	return nil
 }
