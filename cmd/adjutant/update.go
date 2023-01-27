@@ -54,7 +54,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmd = m.title.Focus()
 			}
 
-			log.Info(log.Fields{"msg": s, "index": m.focusIndex, "step": "after"})
+			log.Info(log.Fields{"step": "update", "msg": s, "index": m.focusIndex})
 			return m, cmd
 
 		case "left":
@@ -84,6 +84,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	case progressInfo:
 		log.Info(log.Fields{
+			"step":         "progress-info",
 			"progressInfo": msg,
 		})
 		cmd := m.progressBar.SetPercent(float64(msg.doneBytes) / float64(msg.totalBytes))

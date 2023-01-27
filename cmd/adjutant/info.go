@@ -22,29 +22,32 @@ func info() tea.Msg {
 		var size int64
 		var total, length time.Duration
 		var artist, title string
-
+		log.Info(log.Fields{
+			"step": "start-reading-info",
+			"path": cfg.source,
+		})
 		filepath.Walk(cfg.source, func(path string, info os.FileInfo, err error) error {
-
 			if err != nil {
 				fmt.Println(err)
 				return nil
 			}
-			log.Info(log.Fields{
-				"name": info.Name(),
-				"size": info.Size(),
-				"dir":  info.IsDir(),
-				"path": path,
-			})
 
 			if !info.IsDir() && filepath.Ext(path) == ".mp3" {
 				size += info.Size()
 				artist, title, length = mp3details(path)
 				total += length
+				log.Info(log.Fields{"step": "reading-files",
+					"name": info.Name(), "size": info.Size(), "path": path,
+					"length": length, "artist": artist, "title": title,
+				})
 				tracks = append(tracks, track{name: info.Name(), size: info.Size(), path: path})
 			}
 
 			return nil
 		})
+
+		log.Info(log.Fields{"step": "read-completed", "author": artist, "title": title,
+			"size": size, "length": total, "tracks": len(tracks)})
 
 		program.Send(cd{
 			author: artist,
@@ -62,13 +65,6 @@ func mp3details(file string) (string, string, time.Duration) {
 	mp3, _ := id3.Open(file, options)
 	defer mp3.Close()
 	length, _ := strconv.ParseInt(mp3.GetTextFrame(mp3.CommonID("Length")).Text, 10, 32)
-
-	log.Info(log.Fields{
-		"length": length,
-		"artist": mp3.Artist(),
-		"title":  mp3.Title(),
-	})
-
 	return mp3.Artist(), mp3.Title(), time.Duration(length) * time.Millisecond
 }
 

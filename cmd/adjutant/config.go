@@ -25,6 +25,7 @@ func initConfig() config {
 	}
 
 	log.Info(log.Fields{
+		"step":        "configuration",
 		"source":      cfg.source,
 		"destination": cfg.destination,
 	})

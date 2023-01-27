@@ -38,6 +38,7 @@ func copyWithArg(cd cd, author, title string) tea.Cmd {
 
 	return func() tea.Msg {
 		log.Info(log.Fields{
+			"step":       "copy-progress",
 			"author":     author,
 			"title":      title,
 			"tracks":     len(cd.tracks),
