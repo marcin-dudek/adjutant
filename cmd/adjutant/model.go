@@ -23,7 +23,7 @@ type model struct {
 func initialModel() model {
 	progressBar := progress.New(
 		progress.WithColorProfile(termenv.TrueColor),
-		progress.WithScaledGradient(tint.Hex(theme.Fg()), tint.Hex(theme.BrightCyan())),
+		progress.WithScaledGradient(tint.Hex(theme.Fg()), tint.Hex(mainColor)),
 	)
 
 	s := spinner.New(spinner.WithSpinner(spinner.Points), spinner.WithStyle(focused))
