@@ -9,6 +9,7 @@ import (
 
 	id3 "github.com/bogem/id3v2"
 	tea "github.com/charmbracelet/bubbletea"
+	mp3 "github.com/hajimehoshi/go-mp3"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -62,10 +63,16 @@ func info() tea.Msg {
 }
 
 func mp3details(file string) (string, string, time.Duration) {
-	mp3, _ := id3.Open(file, options)
-	defer mp3.Close()
-	length, _ := strconv.ParseInt(mp3.GetTextFrame(mp3.CommonID("Length")).Text, 10, 32)
-	return mp3.Artist(), mp3.Title(), time.Duration(length) * time.Millisecond
+	track, _ := id3.Open(file, options)
+	defer track.Close()
+	length, e := strconv.ParseInt(track.GetTextFrame(track.CommonID("Length")).Text, 10, 32)
+	if e != nil {
+		reader, _ := os.Open(file)
+		d, _ := mp3.NewDecoder(reader)
+		length = (d.Length() / int64((4 * d.SampleRate()))) * 1000
+		log.Info(log.Fields{"step": "length-reading", "samples": d.Length(), "rate": d.SampleRate(), "length": length})
+	}
+	return track.Artist(), track.Title(), time.Duration(length) * time.Millisecond
 }
 
 type cd struct {
