@@ -7,6 +7,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	zone "github.com/lrstanley/bubblezone"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -31,7 +32,8 @@ func main() {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.Info("AppStarted")
 	cfg = initConfig()
-	program = tea.NewProgram(initialModel())
+	zone.NewGlobal()
+	program = tea.NewProgram(initialModel(), tea.WithAltScreen(), tea.WithMouseCellMotion())
 	if _, err := program.Run(); err != nil {
 		fmt.Printf("could not start program: %s\n", err)
 		os.Exit(1)

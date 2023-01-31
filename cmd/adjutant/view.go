@@ -7,6 +7,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	tint "github.com/lrstanley/bubbletint"
+	zone "github.com/lrstanley/bubblezone"
 )
 
 var (
@@ -42,8 +43,8 @@ func (m model) View() string {
 		m.title.TextStyle = titleStyle
 		blur()
 
-		fmt.Fprintln(&b, m.author.View())
-		fmt.Fprintln(&b, m.title.View())
+		fmt.Fprintln(&b, zone.Mark("author", m.author.View()))
+		fmt.Fprintln(&b, zone.Mark("title", m.title.View()))
 		render(&b, "Files  → %d", len(m.cd.tracks))
 		render(&b, "Size   → %.2f MB", toMB(m.cd.size))
 		renderBottom(&b, "Length → %s", m.cd.length)
@@ -81,12 +82,13 @@ func (m model) View() string {
 		if m.focusIndex == ExitIndex {
 			exitButton = &focused
 		}
-		fmt.Fprintln(&b, scanButton.Render("[ SCAN ]"),
-			copyButton.Copy().PaddingLeft(8).Render("[ COPY ]"),
-			exitButton.Copy().PaddingLeft(8).Render("[ EXIT ]"))
+		fmt.Fprintln(&b,
+			scanButton.Render(zone.Mark("scan", "[ SCAN ]")),
+			copyButton.Copy().PaddingLeft(8).Render(zone.Mark("copy", "[ COPY ]")),
+			exitButton.Copy().PaddingLeft(8).Render(zone.Mark("exit", "[ EXIT ]")))
 	}
 
-	return b.String()
+	return zone.Scan(b.String())
 }
 
 func toMB(v int64) float64 {

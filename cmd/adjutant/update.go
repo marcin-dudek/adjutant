@@ -4,6 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
+	zone "github.com/lrstanley/bubblezone"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -104,6 +105,27 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case spinner.TickMsg: // this is for spinner animation
 		spinner, cmd := m.spinner.Update(msg)
 		m.spinner = spinner
+		return m, cmd
+	case tea.MouseMsg:
+		if msg.Type != tea.MouseLeft {
+			return m, nil
+		}
+		var cmd tea.Cmd
+		if zone.Get("scan").InBounds(msg) {
+			cmd = info
+		} else if zone.Get("exit").InBounds(msg) {
+			cmd = tea.Quit
+		} else if zone.Get("copy").InBounds(msg) {
+			if m.cd != nil {
+				cmd = copyWithArg(*m.cd, m.author.Value(), m.title.Value())
+			}
+		} else if zone.Get("author").InBounds(msg) {
+			m.focusIndex = 0
+			cmd = m.author.Focus()
+		} else if zone.Get("title").InBounds(msg) {
+			m.focusIndex = 1
+			cmd = m.title.Focus()
+		}
 		return m, cmd
 	}
 
