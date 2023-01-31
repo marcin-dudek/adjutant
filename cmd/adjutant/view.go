@@ -48,10 +48,16 @@ func (m model) View() string {
 		render(&b, "Files  → %d", len(m.cd.tracks))
 		render(&b, "Size   → %.2f MB", toMB(m.cd.size))
 		renderBottom(&b, "Length → %s", m.cd.length)
+	} else if m.progress == nil && m.completed == nil && !m.scanning {
+		render(&b, "Author →")
+		render(&b, "Title  →")
+		render(&b, "Files  →")
+		render(&b, "Size   →")
+		renderBottom(&b, "Length →")
 	}
 
 	if m.scanning {
-		render(&b, "%s reading", m.spinner.View())
+		renderBottom(&b, "%s reading", m.spinner.View())
 	}
 
 	if m.progress != nil {
@@ -65,7 +71,7 @@ func (m model) View() string {
 		fmt.Fprintln(&b, m.progressBar.View())
 		render(&b, "Author → %s", m.completed.author)
 		render(&b, "Title  → %s", m.completed.title)
-		render(&b, "Copied → %d", m.completed.total)
+		render(&b, "Files  → %d", m.completed.total)
 		renderBottom(&b, "Size   → %.2f MB", toMB(m.completed.totalBytes))
 	}
 
