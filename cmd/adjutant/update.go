@@ -111,20 +111,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		var cmd tea.Cmd
-		if zone.Get("scan").InBounds(msg) {
+		switch {
+		case zone.Get("scan").InBounds(msg):
 			m.focusIndex = ScanIndex
 			cmd = info
-		} else if zone.Get("exit").InBounds(msg) {
+		case zone.Get("exit").InBounds(msg):
 			cmd = tea.Quit
-		} else if zone.Get("copy").InBounds(msg) {
-			if m.cd != nil {
-				m.focusIndex = CopyIndex
-				cmd = copyWithArg(*m.cd, m.author.Value(), m.title.Value())
-			}
-		} else if zone.Get("author").InBounds(msg) {
+		case zone.Get("copy").InBounds(msg) && m.cd != nil:
+			m.focusIndex = CopyIndex
+			cmd = copyWithArg(*m.cd, m.author.Value(), m.title.Value())
+		case zone.Get("author").InBounds(msg):
 			m.focusIndex = 0
 			cmd = m.author.Focus()
-		} else if zone.Get("title").InBounds(msg) {
+		case zone.Get("title").InBounds(msg):
 			m.focusIndex = 1
 			cmd = m.title.Focus()
 		}

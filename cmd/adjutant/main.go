@@ -35,9 +35,11 @@ func main() {
 	zone.NewGlobal()
 	program = tea.NewProgram(initialModel(), tea.WithAltScreen(), tea.WithMouseCellMotion())
 	if _, err := program.Run(); err != nil {
+		log.Error(err)
 		fmt.Printf("could not start program: %s\n", err)
-		os.Exit(1)
+		return
 	}
+
 	log.Info("AppExited")
 }
 
