@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -46,6 +47,6 @@ func newInput(prompt string) textinput.Model {
 	input.Prompt = prompt
 	input.CharLimit = 64
 	input.PromptStyle = normal
-	input.SetCursorMode(textinput.CursorStatic)
+	input.Cursor.SetMode(cursor.CursorStatic)
 	return input
 }

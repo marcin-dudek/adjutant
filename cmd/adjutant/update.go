@@ -25,22 +25,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, info
 		case "alt+e":
 			return m, copyWithArg(*m.cd, m.author.Value(), m.title.Value())
-
-		// Set focus to next input
-		case "tab", "shift+tab", "enter", "up", "down":
-			s := msg.String()
-
-			if s == "enter" && m.focusIndex == ExitIndex {
+		case "enter":
+			if m.focusIndex == ExitIndex {
 				return m, tea.Quit
 			}
 
-			if s == "enter" && m.focusIndex == CopyIndex {
+			if m.focusIndex == CopyIndex {
 				return m, copyWithArg(*m.cd, m.author.Value(), m.title.Value())
 			}
 
-			if s == "enter" && m.focusIndex == ScanIndex {
+			if m.focusIndex == ScanIndex {
 				return m, info
 			}
+		// Set focus to next input
+		case "tab", "shift+tab", "up", "down":
+			s := msg.String()
 
 			if s == "up" || s == "shift+tab" {
 				m.focusIndex = moveDown(m.cd != nil, m.focusIndex)
