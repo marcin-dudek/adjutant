@@ -33,6 +33,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, copyWithArg(*m.cd, m.author.Value(), m.title.Value())
 			case ScanIndex:
 				return m, info
+			default:
+				m.focusIndex = moveDown(m.cd != nil, m.focusIndex)
+				return m, nil
 			}
 		// Set focus to next input
 		case "tab", "shift+tab", "up", "down":
@@ -51,9 +54,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				cmd = m.title.Focus()
 			}
 
-			log.Info(log.Fields{"step": "update", "msg": s, "index": m.focusIndex})
 			return m, cmd
-
 		case "left":
 			if m.focusIndex > 1 { // navigate only when on buttons
 				m.focusIndex = moveUp(m.cd != nil, m.focusIndex)
@@ -64,6 +65,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.focusIndex = moveDown(m.cd != nil, m.focusIndex)
 				return m, nil
 			}
+		default:
+			// Handle character input and blinking
+			var cmd tea.Cmd
+			if m.focusIndex == 0 {
+				m.author, cmd = m.author.Update(msg)
+			} else if m.focusIndex == 1 {
+				m.title, cmd = m.title.Update(msg)
+			}
+			return m, cmd
 		}
 	case scanning:
 		m.scanning = true
@@ -126,15 +136,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 
-	// Handle character input and blinking
-	var cmd tea.Cmd
-	if m.focusIndex == 0 {
-		m.author, cmd = m.author.Update(msg)
-	} else if m.focusIndex == 1 {
-		m.title, cmd = m.title.Update(msg)
-	}
-
-	return m, cmd
+	return m, nil
 }
 
 func moveDown(scanned bool, index int) int {

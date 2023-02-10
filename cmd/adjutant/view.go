@@ -72,7 +72,8 @@ func (m model) View() string {
 		render(&b, "Author → %s", m.completed.author)
 		render(&b, "Title  → %s", m.completed.title)
 		render(&b, "Files  → %d", m.completed.total)
-		renderBottom(&b, "Size   → %.2f MB", toMB(m.completed.totalBytes))
+		render(&b, "Size   → %.2f MB", toMB(m.completed.totalBytes))
+		renderBottom(&b, "Time   → %s", m.completed.time)
 	}
 
 	if m.progress == nil && !m.scanning {
@@ -104,6 +105,7 @@ func toMB(v int64) float64 {
 func render(w io.Writer, format string, a ...any) {
 	fmt.Fprintln(w, normal.Render(fmt.Sprintf(format, a...)))
 }
+
 func renderBottom(w io.Writer, format string, a ...any) {
 	fmt.Fprintln(w, bottomBorder.Render(fmt.Sprintf(format, a...)))
 }

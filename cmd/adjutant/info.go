@@ -13,9 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var (
-	options id3.Options = id3.Options{Parse: true}
-)
+var options id3.Options = id3.Options{Parse: true}
 
 func info() tea.Msg {
 	go func() {
@@ -27,7 +25,8 @@ func info() tea.Msg {
 			"step": "start-reading-info",
 			"path": cfg.source,
 		})
-		filepath.Walk(cfg.source, func(path string, info os.FileInfo, err error) error {
+
+		e := filepath.Walk(cfg.source, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				fmt.Println(err)
 				return nil
@@ -37,7 +36,8 @@ func info() tea.Msg {
 				size += info.Size()
 				artist, title, length = mp3details(path)
 				total += length
-				log.Info(log.Fields{"step": "reading-files",
+				log.Info(log.Fields{
+					"step": "reading-files",
 					"name": info.Name(), "size": info.Size(), "path": path,
 					"length": length, "artist": artist, "title": title,
 				})
@@ -47,16 +47,23 @@ func info() tea.Msg {
 			return nil
 		})
 
-		log.Info(log.Fields{"step": "read-completed", "author": artist, "title": title,
-			"size": size, "length": total, "tracks": len(tracks)})
-
-		program.Send(cd{
-			author: artist,
-			title:  title,
-			size:   size,
-			tracks: tracks,
-			length: total,
+		log.Info(log.Fields{
+			"step": "read-completed", "author": artist, "title": title,
+			"size": size, "length": total, "tracks": len(tracks),
 		})
+
+		if e != nil {
+			log.Error(e)
+			// program.Send(appError{message: "Not able to read directory"})
+		} else {
+			program.Send(cd{
+				author: artist,
+				title:  title,
+				size:   size,
+				tracks: tracks,
+				length: total,
+			})
+		}
 	}()
 
 	return scanning{}
@@ -89,5 +96,8 @@ type track struct {
 	size int64
 }
 
-type scanning struct {
-}
+type scanning struct{}
+
+// type appError struct {
+// 	message string
+// }

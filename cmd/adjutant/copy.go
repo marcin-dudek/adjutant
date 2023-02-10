@@ -6,14 +6,13 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	log "github.com/sirupsen/logrus"
 )
 
-var (
-	BufferSize = 2024 * 2024
-)
+var BufferSize = 2024 * 2024
 
 type progressInfo struct {
 	total      int
@@ -28,6 +27,7 @@ type completed struct {
 	title      string
 	total      int
 	totalBytes int64
+	time       time.Duration
 }
 
 func copyWithArg(cd cd, author, title string) tea.Cmd {
@@ -35,7 +35,7 @@ func copyWithArg(cd cd, author, title string) tea.Cmd {
 	for _, t := range cd.tracks {
 		totalBytes += t.size
 	}
-
+	t := time.Now()
 	return func() tea.Msg {
 		log.Info(log.Fields{
 			"step":       "copy-progress",
@@ -47,7 +47,11 @@ func copyWithArg(cd cd, author, title string) tea.Cmd {
 
 		destination := filepath.Join(cfg.destination, fmt.Sprintf("%s - %s", author, title))
 		if _, err := os.Stat(destination); errors.Is(err, os.ErrNotExist) {
-			os.Mkdir(destination, os.ModePerm)
+			if e := os.Mkdir(destination, os.ModePerm); e != nil {
+				log.Error(e)
+				return nil
+				// return appError{message: "Failed to create directory. '" + destination + "'."}
+			}
 		}
 
 		go func() {
@@ -63,11 +67,13 @@ func copyWithArg(cd cd, author, title string) tea.Cmd {
 				dst := filepath.Join(destination, cd.tracks[i].name)
 				copyInternal(cd.tracks[i].path, dst, p, &bytesDone)
 			}
+
 			program.Send(completed{
 				author:     cd.author,
 				title:      cd.title,
 				total:      len(cd.tracks),
 				totalBytes: totalBytes,
+				time:       time.Since(t).Truncate(10 * time.Millisecond),
 			})
 		}()
 		return nil
