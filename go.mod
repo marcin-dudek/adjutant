@@ -5,12 +5,12 @@ go 1.19
 require (
 	github.com/bogem/id3v2 v1.2.0
 	github.com/charmbracelet/bubbles v0.15.0
-	github.com/charmbracelet/bubbletea v0.23.1
+	github.com/charmbracelet/bubbletea v0.23.2
 	github.com/charmbracelet/lipgloss v0.6.0
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/lrstanley/bubbletint v0.0.0-20221222153826-8c18bc6ecfd0
 	github.com/lrstanley/bubblezone v0.0.0-20221222153816-e95291e2243e
-	github.com/muesli/termenv v0.13.0
+	github.com/muesli/termenv v0.14.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.15.0
 )
@@ -38,6 +38,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
+	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/term v0.4.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
