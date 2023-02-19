@@ -19,6 +19,7 @@ type model struct {
 	progress    *progressInfo
 	cd          *cd
 	completed   *completed
+	error       *appError
 }
 
 func initialModel() model {
@@ -34,11 +35,8 @@ func initialModel() model {
 		title:       newInput("Title  → "),
 		progressBar: progressBar,
 		spinner:     s,
-		progress:    nil,
 		scanning:    false,
 		focusIndex:  2,
-		cd:          nil,
-		completed:   nil,
 	}
 }
 

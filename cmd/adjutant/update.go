@@ -90,10 +90,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.scanning = false
 		return m, nil
 	case progressInfo:
-		log.Info(log.Fields{
-			"step":         "progress-info",
-			"progressInfo": msg,
-		})
+		log.Info(log.Fields{"step": "progress-info", "progressInfo": msg})
 		cmd := m.progressBar.SetPercent(float64(msg.doneBytes) / float64(msg.totalBytes))
 		m.progress = &msg
 		m.cd = nil
@@ -103,6 +100,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.progress = nil
 		m.cd = nil
 		m.completed = &msg
+		return m, nil
+	case appError:
+		m.focusIndex = ScanIndex
+		m.cd = nil
+		m.progress = nil
+		m.error = &msg
+		m.completed = nil
 		return m, nil
 	case progress.FrameMsg: // this is for progress bar animation
 		progressModel, cmd := m.progressBar.Update(msg)

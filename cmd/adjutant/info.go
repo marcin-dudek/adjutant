@@ -54,7 +54,7 @@ func info() tea.Msg {
 
 		if e != nil {
 			log.Error(e)
-			// program.Send(appError{message: "Not able to read directory"})
+			program.Send(appError{message: "Not able to read directory"})
 		} else {
 			program.Send(cd{
 				author: artist,
@@ -98,6 +98,6 @@ type track struct {
 
 type scanning struct{}
 
-// type appError struct {
-// 	message string
-// }
+type appError struct {
+	message string
+}

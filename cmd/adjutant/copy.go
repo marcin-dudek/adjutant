@@ -49,8 +49,7 @@ func copyWithArg(cd cd, author, title string) tea.Cmd {
 		if _, err := os.Stat(destination); errors.Is(err, os.ErrNotExist) {
 			if e := os.Mkdir(destination, os.ModePerm); e != nil {
 				log.Error(e)
-				return nil
-				// return appError{message: "Failed to create directory. '" + destination + "'."}
+				return appError{message: "Failed to create directory. '" + destination + "'."}
 			}
 		}
 

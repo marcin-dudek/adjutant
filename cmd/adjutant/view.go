@@ -48,7 +48,9 @@ func (m model) View() string {
 		render(&b, "Files  → %d", len(m.cd.tracks))
 		render(&b, "Size   → %.2f MB", toMB(m.cd.size))
 		renderBottom(&b, "Length → %s", m.cd.length)
-	} else if m.progress == nil && m.completed == nil && !m.scanning {
+	}
+
+	if m.progress == nil && m.completed == nil && !m.scanning && m.error == nil {
 		render(&b, "Author →")
 		render(&b, "Title  →")
 		render(&b, "Files  →")
@@ -74,6 +76,10 @@ func (m model) View() string {
 		render(&b, "Files  → %d", m.completed.total)
 		render(&b, "Size   → %.2f MB", toMB(m.completed.totalBytes))
 		renderBottom(&b, "Time   → %s", m.completed.time)
+	}
+
+	if m.error != nil {
+		renderBottom(&b, "Error  → %s", m.error.message)
 	}
 
 	if m.progress == nil && !m.scanning {
