@@ -15,8 +15,8 @@ func initConfig() config {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("$HOME/")
 	viper.AddConfigPath(".")
-	viper.SetDefault("source", "/home/manek/music/")
-	viper.SetDefault("destination", "/home/manek/src/tmp/")
+	viper.SetDefault("source", "C:\\Users\\Avanade\\music-test")
+	viper.SetDefault("destination", "C:\\Users\\Avanade\\music-output")
 	viper.ReadInConfig()
 
 	cfg := config{

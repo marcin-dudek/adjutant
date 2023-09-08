@@ -1,61 +1,51 @@
 package main
 
 import (
-	"errors"
-	"fmt"
-	"os"
-	"time"
+	"embed"
 
-	tea "github.com/charmbracelet/bubbletea"
-	zone "github.com/lrstanley/bubblezone"
-	log "github.com/sirupsen/logrus"
+	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
-func (m model) Init() tea.Cmd {
-	return nil
-}
+// 'wails dev' should properly launch vite to serve the site
+// for live development without needing to seperately launch
+// 'npm run dev' or your flavor such as pnpm in the frontend
+// directory seperately.
 
-var (
-	program *tea.Program
-	cfg     config
-)
+// The comment below chooses what gets packaged with
+// the application.
+
+//go:embed all:frontend/build
+var assets embed.FS
+
+var app *App
+var cfg config
 
 func main() {
-	f, err := initLogFile()
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
-	defer f.Close()
-
-	log.SetOutput(f)
-	log.SetFormatter(&log.JSONFormatter{})
-	log.Info("AppStarted")
+	// Create an instance of the app structure
+	app = NewApp()
 	cfg = initConfig()
-	zone.NewGlobal()
-	program = tea.NewProgram(initialModel(), tea.WithAltScreen(), tea.WithMouseCellMotion())
-	if _, err := program.Run(); err != nil {
-		log.Error(err)
-		fmt.Printf("could not start program: %s\n", err)
-		return
-	}
 
-	log.Info("AppExited")
-}
+	// Create application with options
+	err := wails.Run(&options.App{
+		Title:  "Adjutant",
+		Width:  864,
+		Height: 524,
+		AssetServer: &assetserver.Options{
+			Assets: assets,
+		},
+		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		OnStartup:        app.startup,
+		Bind: []interface{}{
+			app,
+		},
+		Debug: options.Debug{
+			OpenInspectorOnStartup: true,
+		},
+	})
 
-func initLogFile() (*os.File, error) {
-	dir := "logs"
-	if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
-		err := os.Mkdir(dir, os.ModePerm)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	file := fmt.Sprintf("%s/log_%s.txt", dir, time.Now().Format("20060102"))
-	f, err := os.OpenFile(file, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0o644)
 	if err != nil {
-		return nil, err
+		println("Error:", err.Error())
 	}
-	return f, nil
 }
