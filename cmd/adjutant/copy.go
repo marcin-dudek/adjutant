@@ -106,7 +106,6 @@ func copyInternal(src, dst string, p ProgressInfo, bytesDone *int64) error {
 		if n == 0 {
 			break
 		}
-		time.Sleep(700 * time.Millisecond)
 
 		if _, err := destination.Write(buf[:n]); err != nil {
 			return err
