@@ -44,7 +44,7 @@ func copyWithArg(cd CD) {
 		"total-size": totalBytes,
 	})
 
-	destination := filepath.Join(cfg.destination, fmt.Sprintf("%s - %s", cd.Author, cd.Title))
+	destination := filepath.Join(cfg.Destination, fmt.Sprintf("%s - %s", cd.Author, cd.Title))
 	if _, err := os.Stat(destination); errors.Is(err, os.ErrNotExist) {
 		if e := os.Mkdir(destination, os.ModePerm); e != nil {
 			log.Error(e)

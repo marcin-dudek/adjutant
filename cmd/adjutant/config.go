@@ -5,12 +5,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-type config struct {
-	source      string
-	destination string
+type Config struct {
+	Source      string
+	Destination string
 }
 
-func initConfig() config {
+var cfg Config
+
+func initConfig() {
 	viper.SetConfigName("adjutant")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("$HOME/")
@@ -19,15 +21,32 @@ func initConfig() config {
 	viper.SetDefault("destination", "C:\\Users\\Avanade\\music-output")
 	viper.ReadInConfig()
 
-	cfg := config{
-		source:      viper.GetString("source"),
-		destination: viper.GetString("destination"),
+	cfg = getConfig()
+}
+
+func saveDestination(path string) {
+	viper.Set("destination", path)
+	viper.SafeWriteConfig()
+	cfg = getConfig()
+}
+
+func saveSource(path string) {
+	viper.Set("source", path)
+	viper.SafeWriteConfig()
+	cfg = getConfig()
+}
+
+func getConfig() Config {
+	cfg = Config{
+		Source:      viper.GetString("source"),
+		Destination: viper.GetString("destination"),
 	}
 
 	log.Info(log.Fields{
 		"step":        "configuration",
-		"source":      cfg.source,
-		"destination": cfg.destination,
+		"source":      cfg.Source,
+		"destination": cfg.Destination,
 	})
+
 	return cfg
 }

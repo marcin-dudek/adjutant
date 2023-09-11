@@ -20,10 +20,10 @@ func info() CD {
 	var artist, title string
 	log.Info(log.Fields{
 		"step": "start-reading-info",
-		"path": cfg.source,
+		"path": cfg.Source,
 	})
 
-	filepath.Walk(cfg.source, func(path string, info os.FileInfo, err error) error {
+	filepath.Walk(cfg.Source, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Println(err)
 			return nil
@@ -49,7 +49,6 @@ func info() CD {
 		"size": size, "length": total, "tracks": len(tracks),
 	})
 
-	time.Sleep(1 * time.Second)
 	return CD{
 		Author: artist,
 		Title:  title,
@@ -99,8 +98,6 @@ type Track struct {
 	Path string
 	Size int64
 }
-
-type scanning struct{}
 
 type appError struct {
 	message string

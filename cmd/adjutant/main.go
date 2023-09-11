@@ -20,12 +20,11 @@ import (
 var assets embed.FS
 
 var app *App
-var cfg config
 
 func main() {
 	// Create an instance of the app structure
+	initConfig()
 	app = NewApp()
-	cfg = initConfig()
 
 	// Create application with options
 	err := wails.Run(&options.App{

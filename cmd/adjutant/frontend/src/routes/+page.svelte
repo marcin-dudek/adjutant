@@ -4,11 +4,14 @@
     import Info from "./main/info.svelte";
     import Copying from "./main/copying.svelte";
     import Completed from "./main/completed.svelte";
+    import Empty from "./main/empty.svelte";
 </script>
 
 <section class="w-full p-4">
     <section class="card">
-        {#if $state == State.InfoLoading}
+        {#if $state == State.Init}
+            <Empty />
+        {:else if $state == State.InfoLoading}
             <Loading />
         {:else if $state == State.InfoReady}
             <Info />

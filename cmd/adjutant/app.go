@@ -36,6 +36,24 @@ func (a *App) Copy(cd CD) {
 	copyWithArg(cd)
 }
 
+func (a *App) OpenDirectoryDialog(path string) string {
+	options := runtime.OpenDialogOptions{DefaultDirectory: path, Title: "Select directory", CanCreateDirectories: true}
+	r, _ := runtime.OpenDirectoryDialog(a.ctx, options)
+	return r
+}
+
+func (a *App) SaveSource(path string) {
+	saveSource(path)
+}
+
+func (a *App) SaveDestination(path string) {
+	saveDestination(path)
+}
+
+func (a *App) Configuration() Config {
+	return getConfig()
+}
+
 func (a *App) emitProgress(data ProgressInfo) {
 	runtime.EventsEmit(a.ctx, "copy-progress", data)
 }
