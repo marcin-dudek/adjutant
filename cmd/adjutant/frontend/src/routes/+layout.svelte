@@ -1,4 +1,6 @@
 <script lang="ts">
+  export const prerender = true;
+  export const ssr = false;
   import "../app.postcss";
   import { page } from "$app/stores";
   import {
@@ -18,6 +20,7 @@
       state.update(() => State.CopyFinished);
       completed.update(() => data);
       progress.update(() => null);
+      cd.update(() => null);
     });
   });
 
@@ -53,7 +56,7 @@
           type="button"
           class="btn btn-sm variant-ghost-secondary"
           on:click={read}
-          disabled={$state==State.Copying}
+          disabled={$state == State.Copying}
         >
           <span class="icon-[mdi--refresh]" />
           <span>Read</span>
