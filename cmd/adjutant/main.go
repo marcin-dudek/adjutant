@@ -28,20 +28,14 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "Adjutant",
-		Width:  864,
-		Height: 524,
-		AssetServer: &assetserver.Options{
-			Assets: assets,
-		},
+		Title:            "Adjutant",
+		Width:            860,
+		Height:           500,
+		AssetServer:      &assetserver.Options{Assets: assets},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:        app.startup,
-		Bind: []interface{}{
-			app,
-		},
-		Debug: options.Debug{
-			OpenInspectorOnStartup: true,
-		},
+		Bind:             []interface{}{app},
+		Debug:            options.Debug{OpenInspectorOnStartup: true},
 	})
 
 	if err != nil {

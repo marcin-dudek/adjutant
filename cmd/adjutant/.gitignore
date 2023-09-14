@@ -1,4 +1,6 @@
-build
+build/bin
+build/windows/installer
+frontend/build
 frontend/dist
 frontend/node_modules
 frontend/wailsjs

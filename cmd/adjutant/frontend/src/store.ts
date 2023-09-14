@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { main } from "$lib/wailsjs/go/models";
+import type { main } from "$lib/wailsjs/go/models";
 
 export enum State {
     Init = 0,

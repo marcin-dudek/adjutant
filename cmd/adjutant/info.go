@@ -13,7 +13,6 @@ import (
 )
 
 func info() CD {
-	//go func() {
 	var tracks []Track
 	var size int64
 	var total, length time.Duration
@@ -56,20 +55,6 @@ func info() CD {
 		Tracks: tracks,
 		Length: total,
 	}
-	// if e != nil {
-	// 	log.Error(e)
-	// 	app.emitEvent("error-event", appError{message: "Not able to read directory"})
-
-	// } else {
-	// 	app.emitEvent("info", cd{
-	// 		author: artist,
-	// 		title:  title,
-	// 		size:   size,
-	// 		tracks: tracks,
-	// 		length: total,
-	// 	})
-	// }
-	//}()
 }
 
 func mp3details(file string) (string, string, time.Duration) {
