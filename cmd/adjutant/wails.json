@@ -9,5 +9,12 @@
   "author": {
     "name": "Marcin",
     "email": "manekd@gmail.com"
+  },
+  "info": {
+    "companyName": "Manek",
+    "productName": "Adjutant",
+    "productVersion": "1.0.0.0",
+    "copyright": "Copyright Manek. All rights reserved.",
+    "comments": "Built using Wails by Manek"
   }
 }
