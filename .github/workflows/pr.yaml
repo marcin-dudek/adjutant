@@ -17,12 +17,24 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.20.x
+          go-version: 1.21.x
+      
+      - name: Install UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          install-only: true
+      
+      - name: Setup wails
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21.x
+      
+      - name: Wails build
+        uses: dAppServer/wails-build-action@v2.2
+        with:
+          build-name: "test"
+          build-platform: "windows/amd64"
+          go-version: 1.21
+          package: false
+          nsis: false
 
-      # - name: golangci-lint
-      #   uses: golangci/golangci-lint-action@v3
-
-      # - name: Run Gosec Security Scanner
-      #   uses: securego/gosec@master
-      #   with:
-      #     args: ./...
