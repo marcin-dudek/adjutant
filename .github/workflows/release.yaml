@@ -30,6 +30,8 @@ jobs:
     - name: Set version
       working-directory: "./cmd/adjutant"
       run: |
+        apt-get install jq
+        which jq
         version=$(echo "${{github.ref_name}}" | cut -d 'v' -f 2)
         jq --arg v "$version.0" '(.info.productVersion) |= $v' .\wails.json >> .\wails.json
         jq '.' .\wails.json
