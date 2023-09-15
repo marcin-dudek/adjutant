@@ -30,9 +30,13 @@ jobs:
     - name: Set version
       working-directory: "./cmd/adjutant"
       run: |
-        version=$(echo "${{github.ref_name}}" | cut -d 'v' -f 2)
-        jq --arg v "$version.0" '(.info.productVersion) |= $v' .\wails.json >> .\wails.json
-
+        version=$(echo "${{github.ref_name}}.0" | cut -d 'v' -f 2)
+        jq --arg v "$version" '(.info.productVersion) |= $v' ./wails.json > ./tmp.json
+        mv ./tmp.json ./wails.json
+        echo "::group::Conifg content"
+        cat ./wails.json
+        echo "::endgroup::"
+        
     - name: Build app
       working-directory: "./cmd/adjutant"
       run: wails build -platform ${{matrix.os}}/amd64 -upx
