@@ -15,3 +15,5 @@
 # vendor/
 
 logs/
+node_modules
+.svelte-kit

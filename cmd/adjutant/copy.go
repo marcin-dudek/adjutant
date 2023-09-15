@@ -8,78 +8,78 @@ import (
 	"path/filepath"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
 	log "github.com/sirupsen/logrus"
 )
 
 var BufferSize = 2024 * 2024
 
-type progressInfo struct {
-	total      int
-	done       int
-	totalBytes int64
-	doneBytes  int64
-	current    string
+type ProgressInfo struct {
+	Total      int
+	Done       int
+	TotalBytes int64
+	DoneBytes  int64
+	Current    string
 }
 
-type completed struct {
-	author     string
-	title      string
-	total      int
-	totalBytes int64
-	time       time.Duration
+type Completed struct {
+	Author     string
+	Title      string
+	Total      int
+	TotalBytes int64
+	Time       time.Duration
+	Path       string
 }
 
-func copyWithArg(cd cd, author, title string) tea.Cmd {
-	var totalBytes, bytesDone int64
-	for _, t := range cd.tracks {
-		totalBytes += t.size
+func copyWithArg(cd CD) {
+	var totalBytes, bytesDone int64 = 0, 0
+	for _, t := range cd.Tracks {
+		totalBytes += t.Size
 	}
 	t := time.Now()
-	return func() tea.Msg {
-		log.Info(log.Fields{
-			"step":       "copy-progress",
-			"author":     author,
-			"title":      title,
-			"tracks":     len(cd.tracks),
-			"total-size": totalBytes,
-		})
+	log.Info(log.Fields{
+		"step":       "copy-progress",
+		"author":     cd.Author,
+		"title":      cd.Title,
+		"tracks":     len(cd.Tracks),
+		"total-size": totalBytes,
+	})
 
-		destination := filepath.Join(cfg.destination, fmt.Sprintf("%s - %s", author, title))
-		if _, err := os.Stat(destination); errors.Is(err, os.ErrNotExist) {
-			if e := os.Mkdir(destination, os.ModePerm); e != nil {
-				log.Error(e)
-				return appError{message: "Failed to create directory. '" + destination + "'."}
+	destination := filepath.Join(cfg.Destination, fmt.Sprintf("%s - %s", cd.Author, cd.Title))
+	if _, err := os.Stat(destination); errors.Is(err, os.ErrNotExist) {
+		if e := os.Mkdir(destination, os.ModePerm); e != nil {
+			log.Error(e)
+			//return appError{message: "Failed to create directory. '" + destination + "'."}
+		}
+	}
+
+	go func() {
+		for i := 0; i < len(cd.Tracks); i++ {
+			p := ProgressInfo{
+				Total:      len(cd.Tracks),
+				TotalBytes: totalBytes,
+				DoneBytes:  bytesDone,
+				Done:       i + 1,
+				Current:    cd.Tracks[i].Name,
 			}
+			log.Info(p)
+			app.emitProgress(p)
+
+			dst := filepath.Join(destination, cd.Tracks[i].Name)
+			copyInternal(cd.Tracks[i].Path, dst, p, &bytesDone)
 		}
 
-		go func() {
-			for i := 0; i < len(cd.tracks); i++ {
-				p := progressInfo{
-					total:      len(cd.tracks),
-					totalBytes: totalBytes,
-					doneBytes:  bytesDone,
-					done:       i + 1,
-					current:    cd.tracks[i].name,
-				}
-				program.Send(p)
-				dst := filepath.Join(destination, cd.tracks[i].name)
-				copyInternal(cd.tracks[i].path, dst, p, &bytesDone)
-			}
-
-			program.Send(completed{
-				author:     cd.author,
-				title:      cd.title,
-				total:      len(cd.tracks),
-				totalBytes: totalBytes,
-				time:       time.Since(t).Truncate(10 * time.Millisecond),
-			})
-		}()
-		return nil
-	}
+		app.emitCompleted(Completed{
+			Author:     cd.Author,
+			Title:      cd.Title,
+			Total:      len(cd.Tracks),
+			TotalBytes: totalBytes,
+			Time:       time.Since(t).Truncate(10 * time.Millisecond),
+			Path:       destination,
+		})
+	}()
 }
 
-func copyInternal(src, dst string, p progressInfo, bytesDone *int64) error {
+func copyInternal(src, dst string, p ProgressInfo, bytesDone *int64) error {
 	source, err := os.Open(src)
 	if err != nil {
 		return err
@@ -111,12 +111,12 @@ func copyInternal(src, dst string, p progressInfo, bytesDone *int64) error {
 			return err
 		}
 		*bytesDone += int64(n)
-		program.Send(progressInfo{
-			totalBytes: p.totalBytes,
-			doneBytes:  *bytesDone,
-			total:      p.total,
-			done:       p.done,
-			current:    p.current,
+		app.emitProgress(ProgressInfo{
+			TotalBytes: p.TotalBytes,
+			DoneBytes:  *bytesDone,
+			Total:      p.Total,
+			Done:       p.Done,
+			Current:    p.Current,
 		})
 	}
 	return nil
