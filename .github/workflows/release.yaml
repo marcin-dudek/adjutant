@@ -33,7 +33,7 @@ jobs:
         version=$(echo "${{github.ref_name}}.0" | cut -d 'v' -f 2)
         jq --arg v "$version" '(.info.productVersion) |= $v' ./wails.json > ./wails.json
         echo "::group::Conifg content"
-        jq '.' ./wails.json
+        cat ./wails.json
         echo "::endgroup::"
         
     - name: Build app
