@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [linux, windows]
+        os: [windows]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: adjutant-${{matrix.os}}
-        path: adjutant*
+        path: cmd/adjutant/build/bin/adjutant*
         retention-days: 5
 
   release:
