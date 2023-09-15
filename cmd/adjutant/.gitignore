@@ -1,5 +1,5 @@
 build/bin
-build/windows/installer
+build/windows
 frontend/build
 frontend/dist
 frontend/node_modules
