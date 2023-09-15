@@ -27,6 +27,6 @@ jobs:
       - name: Setup wails
         run: go install github.com/wailsapp/wails/v2/cmd/wails@latest  
       
-      - name: Setup wails
+      - name: Build app
         working-directory: "./cmd/adjutant"
-        run: wails build -nopackage
+        run: wails build -platform windows/arm64
