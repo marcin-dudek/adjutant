@@ -31,7 +31,7 @@ jobs:
       working-directory: "./cmd/adjutant"
       run: |
         version=$(echo "${{github.ref_name}}" | cut -d 'v' -f 2)
-        jq --arg v "$version.0" '(.info.productVersion) |= $v' .\wails.json >> wails.json
+        jq --arg v "$version.0" '(.info.productVersion) |= $v' .\wails.json >> .\wails.json
 
     - name: Build app
       working-directory: "./cmd/adjutant"
