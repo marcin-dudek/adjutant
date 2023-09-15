@@ -30,15 +30,20 @@ jobs:
     - name: Set version
       working-directory: "./cmd/adjutant"
       run: |
-        which jq
-        version=$(echo "${{github.ref_name}}" | cut -d 'v' -f 2)
-        jq --arg v "$version.0" '(.info.productVersion) |= $v' .\wails.json >> .\wails.json
-        jq '.' .\wails.json
+        jq --version
+        version=$(echo "${{github.ref_name}}.0" | cut -d 'v' -f 2)
+        jq --arg v "$version" '(.info.productVersion) |= $v' ./wails.json >> ./wails.json
+        jq '.' ./wails.json
         echo "::group::Conifg content"
-        cat .\wails.json
-        cat .\wails.json >> $GITHUB_OUTPUT
+        cat ./wails.json
+        cat ./wails.json >> $GITHUB_OUTPUT
         echo "::endgroup::"
 
+    - name: Output file content
+      uses: pCYSl5EDgo/cat@1.0.1
+      with:
+        path: ./cmd/adjutant/wails.json # Specify the path of the file you want to output
+        
     - name: Build app
       working-directory: "./cmd/adjutant"
       run: wails build -platform ${{matrix.os}}/amd64 -upx
