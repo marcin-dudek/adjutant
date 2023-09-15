@@ -29,7 +29,9 @@ jobs:
 
     - name: Set version
       working-directory: "./cmd/adjutant"
-      run: echo '${{github.ref_name}}' && jq '(.info.comments) |= "${{github.ref_name}}.0 build by Marcin"' .\wails.json >> wails.json
+      run: |
+        version=$(echo "${{github.ref_name}}" | cut -d 'v' -f 2)
+        jq --arg v "$version.0" '(.info.productVersion) |= $v' .\wails.json >> wails.json
 
     - name: Build app
       working-directory: "./cmd/adjutant"
