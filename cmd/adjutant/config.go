@@ -17,8 +17,8 @@ func initConfig() {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("$HOME/")
 	viper.AddConfigPath(".")
-	viper.SetDefault("source", "C:\\Users\\Avanade\\music-test")
-	viper.SetDefault("destination", "C:\\Users\\Avanade\\music-output")
+	viper.SetDefault("source", "C:\\Users\\")
+	viper.SetDefault("destination", "C:\\Users\\")
 	viper.ReadInConfig()
 
 	cfg = getConfig()

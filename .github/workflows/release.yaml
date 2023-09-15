@@ -25,8 +25,12 @@ jobs:
         install-only: true
         
     - name: Setup wails
-      run: go install github.com/wailsapp/wails/v2/cmd/wails@latest  
-      
+      run: go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+    - name: Set version
+      working-directory: "./cmd/adjutant"
+      run: echo '${{github.ref_name}}' && jq '(.info.comments) |= "${{github.ref_name}}.0 build by Marcin"' .\wails.json >> wails.json
+
     - name: Build app
       working-directory: "./cmd/adjutant"
       run: wails build -platform ${{matrix.os}}/amd64 -upx
