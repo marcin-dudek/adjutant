@@ -33,6 +33,6 @@ jobs:
     
     - name: Build app
       working-directory: "./cmd/adjutant"
-      run: wails build -platform ${{matrix.os}}/arm64
+      run: wails build -platform ${{matrix.os}}/amd64
 
 
