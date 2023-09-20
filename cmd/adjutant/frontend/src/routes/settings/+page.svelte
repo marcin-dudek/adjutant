@@ -8,6 +8,7 @@
         SaveDestination,
     } from "$lib/wailsjs/go/main/App";
     import { onMount } from "svelte";
+    import Header from "../components/header.svelte";
 
     const changeDestination = async () => {
         let cfg = get(config);
@@ -41,7 +42,7 @@
             <div class="grid grid-cols-4 gap-4">
                 <div class="col-span-4">
                     <label class="label">
-                        <span>Source:</span>
+                        <Header type="Source"/>
                         <input
                             class="input"
                             type="text"
@@ -56,7 +57,7 @@
             <div class="grid grid-cols-4 gap-4">
                 <div class="col-span-4">
                     <label class="label">
-                        <span>Destination:</span>
+                        <Header type="Destination"/>
                         <input
                             class="input"
                             type="text"
