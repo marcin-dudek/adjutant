@@ -2,6 +2,7 @@
     import { Copy } from "$lib/wailsjs/go/main/App";
     import { State, cd, state } from "../../store";
     import { toMB, toDuration } from "../../conversion";
+    import Header from "../components/header.svelte";
 
     const startCopying = async () => {
         state.update(() => State.Copying);
@@ -13,29 +14,39 @@
     <div class="grid grid-cols-4 gap-4">
         <div class="col-span-4">
             <label class="label" for="author">
-                <span>Author:</span>
-                <input id="author" class="input" type="text" bind:value={$cd.Author} />
+                <Header type="Author" />
+                <input
+                    id="author"
+                    class="input"
+                    type="text"
+                    bind:value={$cd.Author}
+                />
             </label>
         </div>
     </div>
     <div class="grid grid-cols-4 gap-4">
         <div class="col-span-4">
             <label class="label" for="title">
-                <span>Title:</span>
-                <input id="title" class="input" type="text" bind:value={$cd.Title} />
+                <Header type="Title" />
+                <input
+                    id="title"
+                    class="input"
+                    type="text"
+                    bind:value={$cd.Title}
+                />
             </label>
         </div>
     </div>
     <div class="grid grid-cols-4 gap-4">
-        <div>Tracks:</div>
+        <div><Header type="Tracks" /></div>
         <div class="col-span-3">{$cd.Tracks.length}</div>
     </div>
     <div class="grid grid-cols-4 gap-4">
-        <div>Size:</div>
+        <div><Header type="Size" /></div>
         <div class="col-span-3">{toMB($cd.Size)} MB</div>
     </div>
     <div class="grid grid-cols-4 gap-4">
-        <div>Length:</div>
+        <div><Header type="Length" /></div>
         <div class="col-span-3">{toDuration($cd.Length)}</div>
     </div>
 
