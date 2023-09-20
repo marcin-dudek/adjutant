@@ -25,11 +25,11 @@
         <div class="col-span-3">{$cd.Title}</div>
     </div>
     <div class="grid grid-cols-4 gap-4">
-        <div>Current:</div>
+        <div><Header type="Current"/></div>
         <div class="col-span-3">{$progress?.Current}</div>
     </div>
     <div class="grid grid-cols-4 gap-4">
-        <div>Progress:</div>
+        <div><Header type="Progress"/></div>
         {#if $progress}
             <div class="col-span-3">{$progress.Done} / {$progress.Total}</div>
         {:else}
@@ -37,7 +37,7 @@
         {/if}
     </div>
     <div class="grid grid-cols-4 gap-4">
-        <div>Progress:</div>
+        <div><Header type="Progress"/></div>
         {#if $progress}
             <div class="col-span-3">
                 {toMB($progress.DoneBytes)} / {toMB($progress.TotalBytes)} MB

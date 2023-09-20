@@ -7,6 +7,8 @@
         | "Time"
         | "Path"
         | "Length"
+        | "Progress"
+        | "Current"
         | "Source"
         | "Destination";
 
@@ -48,6 +50,16 @@
         class="icon-[mdi--clock-time-eight-outline]"
         style="vertical-align: -0.125em; margin-right: 5px;"
     />Length:
+{:else if type === "Current"}
+    <span
+        class="icon-[mdi--file-music-outline]"
+        style="vertical-align: -0.125em; margin-right: 5px;"
+    />Current:
+{:else if type === "Progress"}
+    <span
+        class="icon-[mdi--circle-slice-5]"
+        style="vertical-align: -0.125em; margin-right: 5px;"
+    />Progress:
 {:else if type === "Source"}
     <span
         class="icon-[mdi--folder-arrow-right]"
