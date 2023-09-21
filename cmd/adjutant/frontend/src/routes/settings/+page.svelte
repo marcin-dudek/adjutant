@@ -42,7 +42,7 @@
             <div class="grid grid-cols-4 gap-4">
                 <div class="col-span-4">
                     <label class="label">
-                        <Header type="Source"/>
+                        <Header type="Source" />
                         <input
                             class="input"
                             type="text"
@@ -57,7 +57,7 @@
             <div class="grid grid-cols-4 gap-4">
                 <div class="col-span-4">
                     <label class="label">
-                        <Header type="Destination"/>
+                        <Header type="Destination" />
                         <input
                             class="input"
                             type="text"
