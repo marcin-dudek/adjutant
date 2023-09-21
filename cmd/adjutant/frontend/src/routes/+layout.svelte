@@ -56,7 +56,7 @@
           type="button"
           class="btn btn-sm variant-ghost-secondary"
           on:click={read}
-          disabled={$state === State.Copying || $state === State.InfoReady}
+          disabled={$state === State.Copying || $state === State.InfoLoading}
         >
           <span class="icon-[mdi--refresh]" />
           <span>Read</span>

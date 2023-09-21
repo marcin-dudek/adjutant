@@ -60,12 +60,16 @@ func info() CD {
 func mp3details(file string) (string, string, time.Duration) {
 	track, _ := id3.Open(file, id3.Options{Parse: true})
 	defer track.Close()
-	length, e := strconv.ParseInt(track.GetTextFrame(track.CommonID("Length")).Text, 10, 32)
-	if e != nil {
+	length, e1 := strconv.ParseInt(track.GetTextFrame(track.CommonID("Length")).Text, 10, 32)
+	if e1 != nil {
 		reader, _ := os.Open(file)
-		d, _ := mp3.NewDecoder(reader)
-		length = (d.Length() / int64((4 * d.SampleRate()))) * 1000
-		log.Info(log.Fields{"step": "length-reading", "samples": d.Length(), "rate": d.SampleRate(), "length": length})
+		d, e2 := mp3.NewDecoder(reader)
+		if e2 != nil {
+			length = (d.Length() / int64((4 * d.SampleRate()))) * 1000
+			log.Info(log.Fields{"step": "length-reading", "samples": d.Length(), "rate": d.SampleRate(), "length": length})
+		} else {
+			log.Warn(log.Fields{"step": "length-reading", "error": e2})
+		}
 	}
 	return track.Artist(), track.Title(), time.Duration(length) * time.Millisecond
 }
