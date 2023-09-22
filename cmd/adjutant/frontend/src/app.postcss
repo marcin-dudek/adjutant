@@ -3,3 +3,15 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+@font-face {
+	/* Reference name */
+	font-family: 'Inter';
+	/* For multiple files use commas, ex: url(), url(), ... */
+	src: url('./lib/assets/fonts/Inter-VariableFont.ttf');
+}
+
+:root [data-theme='skeleton'] {
+	--theme-font-family-base: 'Inter', sans-serif;
+	--theme-font-family-heading: 'Inter', sans-serif;
+}
