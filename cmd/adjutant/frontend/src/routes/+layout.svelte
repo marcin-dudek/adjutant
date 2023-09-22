@@ -50,7 +50,7 @@
   </svelte:fragment>
   <svelte:fragment slot="pageHeader">
     <AppBar gridColumns="grid-cols-2" slotTrail="place-content-end">
-      <h2 class="h2"><span>Adjutant</span></h2>
+      <h2 class="h2">Adjutant</h2>
       <svelte:fragment slot="trail">
         <button
           type="button"
