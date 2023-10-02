@@ -34,6 +34,10 @@
         let cfg = await Configuration();
         config.update(() => cfg);
     });
+
+    const isValid = ()=> {
+        return true;
+    }
 </script>
 
 <section class="w-full p-4">
@@ -65,6 +69,16 @@
                             bind:value={$config.Destination}
                         />
                     </label>
+                </div>
+            </div>
+        </div>
+        <div class="p-4 space-y-4">
+            <div class="grid grid-cols-4 gap-4">
+                <div class="col-span-4">
+                    <div class="btn-group variant-ghost-secondary">
+                        <input class="input" type="text" placeholder="ISBN" autocomplete="off" />
+                        <button class="btn ">Get</button>
+                    </div>
                 </div>
             </div>
         </div>

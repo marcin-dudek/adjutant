@@ -15,7 +15,7 @@ var cfg Config
 func initConfig() {
 	viper.SetConfigName("adjutant")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("$HOME/")
+	viper.AddConfigPath("$HOME\\")
 	viper.AddConfigPath(".")
 	viper.SetDefault("source", "C:\\Users\\")
 	viper.SetDefault("destination", "C:\\Users\\")
@@ -26,13 +26,13 @@ func initConfig() {
 
 func saveDestination(path string) {
 	viper.Set("destination", path)
-	viper.SafeWriteConfig()
+	viper.WriteConfig()
 	cfg = getConfig()
 }
 
 func saveSource(path string) {
 	viper.Set("source", path)
-	viper.SafeWriteConfig()
+	viper.WriteConfig()
 	cfg = getConfig()
 }
 

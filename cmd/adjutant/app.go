@@ -32,6 +32,10 @@ func (a *App) Info() CD {
 	return info()
 }
 
+func (a *App) BookInfo(isbn string) (Book, error) {
+	return bookInfo(isbn)
+}
+
 func (a *App) Copy(cd CD) {
 	copyWithArg(cd)
 }
