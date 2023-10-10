@@ -9,7 +9,6 @@
     AppBar,
     AppRailAnchor,
   } from "@skeletonlabs/skeleton";
-  import { Info } from "$lib/wailsjs/go/main/App";
   import { state, cd, State, progress, completed } from "../store";
   import { EventsOn } from "$lib/wailsjs/runtime/runtime";
   import { onMount } from "svelte";
@@ -23,13 +22,6 @@
       cd.update(() => null);
     });
   });
-
-  const read = async () => {
-    state.update(() => State.InfoLoading);
-    let cdinfo = await Info();
-    cd.update(() => cdinfo);
-    state.update(() => State.InfoReady);
-  };
 </script>
 
 <AppShell>
@@ -49,9 +41,9 @@
     </AppRail>
   </svelte:fragment>
   <svelte:fragment slot="pageHeader">
-    <AppBar gridColumns="grid-cols-2" slotTrail="place-content-end">
+    <AppBar gridColumns="grid-cols-1 text-center" slotTrail="place-content-end">
       <h2 class="h2">Adjutant</h2>
-      <svelte:fragment slot="trail">
+      <!-- <svelte:fragment slot="trail">
         <button
           type="button"
           class="btn btn-sm variant-ghost-secondary"
@@ -61,7 +53,7 @@
           <span class="icon-[mdi--refresh]" />
           <span>Read</span>
         </button>
-      </svelte:fragment>
+      </svelte:fragment> -->
     </AppBar>
   </svelte:fragment>
   <!-- Router Slot -->
